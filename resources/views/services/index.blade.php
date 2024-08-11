@@ -1,5 +1,5 @@
 <x-layout>
-    <main class="mx-60 mt-5 min-h-svh">
+    <main class="mx-60 mt-5 h-screen">
         <div class="grid grid-cols-2 gap-x-2">
             @forelse ($services as $service)
                 <div class="col-span-1 bg-stone-100/90 border border-sky-700/80 rounded-md shadow-md py-3 px-4">

@@ -11,6 +11,9 @@
                 <p class="mb-4 text-justify">
                     The Extension Office provide the requirement for Financial Assistance. After the requirements it will be submitted to the Department of Social Welfare and Development. The DSWD is responsible for the disbursement of the Financial Aid.
                 </p>
+                <div class="w-full h-96 mb-10">
+                    <img src="{{ asset('images/banner-2.jpg') }}" alt="Banner" class="object-cover object-top w-full h-full">
+                </div>
                 <p class="mb-4 text-justify">
                     The Extension Office of Tagoloan stands out as a prominent Financial Assistance organization, catering to individuals in need of support. For Filipinos this assistance initiatives hold propound relevance. The problem may occur due to queueing to multiple individuals applying for the Financial Assistance. Also, dealing with many follow up concerns of clients who applied for the Financial Assistance regarding to their requests. The office staff work load will be double while entertaining other clients. In addition, the staffs personal contact number are being asked by the client to get the notification when is the schedule for the applied assistance they need, it is a burden for the staff even on nonworking hours specially on weekend when some clients called just to get the information of what is the status of their assistance.
                 </p>

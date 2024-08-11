@@ -14,7 +14,7 @@
     class="bg-cover bg-no-repeat bg-center bg-opacity-80 min-h-screen"
     data-bg-image="{{ asset('images/bg.jpg') }}">
         @include('layouts.navbar')
-        {{ $slot }}
+        {{ $slot }} 
         @include('layouts.footer')
     </body>
     <script>
@@ -28,7 +28,7 @@
 
             const options = {
                 root: null,
-                rootMargin: '200px 0px', // Adjust margin based on your needs
+                rootMargin: '200px 0px',
                 threshold: 0.5,
             };
 
