@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Request extends Model
+{
+
+    use HasFactory;
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    protected $fillable = [
+        'name',
+        'address',
+        'contact',
+        'email',
+        'status',
+        'tracking_no',
+        'files_path',
+        'service_id',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($request) {
+
+            if (empty($request->tracking_no)) {
+                $request->tracking_no = uniqid();
+            }
+
+            if (empty($request->status)) {
+                $request->status = "For review";
+            }
+        });
+    }
+}

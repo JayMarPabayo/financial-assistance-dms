@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+label {
+    @apply text-slate-700;
+}
+
+input:not(.search) {
+    @apply shadow-inner ps-2 py-2 rounded-md block mb-3 border border-sky-600 focus:outline-none focus:border-sky-400 focus:outline-sky-400 focus:outline-1 duration-300 text-sky-800;
+}
+
+.btn-primary {
+    @apply bg-sky-800 py-2 w-44 rounded-md text-sm text-center text-white font-medium hover:bg-sky-800/80;
+}
