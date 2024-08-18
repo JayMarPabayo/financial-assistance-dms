@@ -15,12 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create(['name' => 'John S. Doe', 'username' => 'admin', 'role' => 'Administrator']);
 
         Service::factory()->create([
             'name' => 'Burial Assistance',
@@ -47,6 +43,6 @@ class DatabaseSeeder extends Seeder
 5. Authorization letter duly signed by the member. (if through authorization)'
         ]);
 
-        Request::factory(4)->create();
+        Request::factory(25)->create();
     }
 }
