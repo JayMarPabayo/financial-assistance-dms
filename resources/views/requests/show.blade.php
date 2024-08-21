@@ -22,6 +22,7 @@
                         <tr class="bg-sky-700 border border-sky-700">
                             <th class="text-start text-white py-2 px-3">Tracking No.</th>
                             <th class="text-start text-white py-2 px-3">Applicant</th>
+                            <th class="text-start text-white py-2 px-3">Service</th>
                             <th class="text-start text-white py-2 px-3">Submitted at</th>
                             <th class="text-center text-white py-2 px-3">Status</th>
                         </tr>
@@ -30,6 +31,7 @@
                         <tr class="border border-slate-500/50">
                             <td class="py-2 px-3">{{ strtoupper($request->tracking_no) }}</td>
                             <td class="py-2 px-3">{{ $request->name }}</td>
+                            <td class="py-2 px-3">{{ $request->service->name }}</td>
                             <td class="py-2 px-3">{{ $request->updated_at->format('d/m/Y') }}</td>
                             <td class="py-2 px-3 text-center">
                                 <x-status-badge :status="$request->status" />

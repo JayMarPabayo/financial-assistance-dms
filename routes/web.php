@@ -6,6 +6,7 @@ use App\Models\Request as RequestModel;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
 
@@ -50,16 +51,15 @@ Route::middleware('guest')->group(function () {
 
         if ($request->has('files_path')) {
             $filePaths = [];
-            if ($request->has('files_path')) {
-                $filePaths = [];
 
-                foreach ($request->file('files_path') as $file) {
-                    $path = $file->store('attachments', 'private');
-                    $filePaths[] = $path;
-                }
-
-                $data['files_path'] = json_encode($filePaths);
+            foreach ($request->file('files_path') as $file) {
+                $filename = $file->getClientOriginalName();
+                $path = $file->storeAs('attachments', $filename, 'private');
+                $filePaths[] = $path;
             }
+
+
+            $data['files_path'] = json_encode($filePaths);
         }
 
         $data['status'] = 'For review';
@@ -105,4 +105,20 @@ Route::middleware('auth')->group(function () {
             ->paginate(15);
         return view('requests.index', ['requests' => $requests, 'services' => Service::all()]);
     })->name('requests.index');
+
+    Route::get('requests/{tracking}', function ($tracking) {
+        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+        return view('requests.update', ['request' => $request]);
+    })->name('requests.update');
+
+
+    Route::get('download/{filename}', function ($filename) {
+        $filePath = storage_path("app/private/attachments/{$filename}");
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        } else {
+            abort(404, 'File not found.');
+        }
+    })->name('file.download');
 });
