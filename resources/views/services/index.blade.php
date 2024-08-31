@@ -1,19 +1,17 @@
 <x-layout>
-    <main class="mx-60 mt-5 h-screen">
-        <div class="grid grid-cols-2 gap-x-2">
-            @forelse ($services as $service)
-                <div class="col-span-1 bg-stone-100/90 border border-sky-700/80 rounded-md shadow-md py-3 px-4">
-                    <h1 class="text-sky-900 text-lg font-semibold">{{ $service->name }}</h1>
-                    <p class="text-slate-700 text-sm mb-3">{{ $service->description }}</p>
-                    <div class="flex justify-end">
-                        <a href="{{ route('services.show', $service ) }}" class="btn-primary">Apply</a>
-                    </div>
+    <div class="grid grid-cols-2 gap-x-2">
+        @forelse ($services as $service)
+            <div class="col-span-1 bg-stone-100/90 border border-sky-700/80 rounded-md shadow-md py-3 px-4">
+                <h1 class="text-sky-900 text-lg font-semibold">{{ $service->name }}</h1>
+                <p class="text-slate-700 text-sm mb-3">{{ $service->description }}</p>
+                <div class="flex justify-end">
+                    <a href="{{ route('services.show', $service ) }}" class="btn-primary">Apply</a>
                 </div>
-            @empty
-                <div class="col-span-2 text-center">
-                    No data
-                </div>
-            @endforelse
-        </div>
-    </main>
+            </div>
+        @empty
+            <div class="col-span-2 text-center">
+                No data
+            </div>
+        @endforelse
+    </div>
 </x-layout>

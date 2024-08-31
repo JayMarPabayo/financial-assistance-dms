@@ -2,7 +2,7 @@
     <header class="text-center h-24 py-3 bg-sky-900 text-white text-4xl font-medium tracking-wide flex items-center justify-center">
         <h1>{{ $service->name }}</h1>
     </header>
-    <main class="w-full min-h-svh px-60 pt-10 bg-white/50 text-lg text-slate-900 pb-5">
+    <main class="pt-10 text-lg text-slate-900">
         <p class="mb-7">{{ $service->description }}</p>
 
         <h1 class="text-sky-700 font-medium text-xl mb-1">Eligibilities</h1>
@@ -12,8 +12,8 @@
         <p class="mb-7">{!! nl2br(e($service->requirements)) !!}</p>
         
         <div class="border-t-2 border-white mt-20">
-            <form action="{{ route('requests.post', $service) }}"
-            method="post"
+            <form action="{{ route('applications.post', $service) }}"
+            method="POST"
             enctype="multipart/form-data"
             class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md">
                 @csrf

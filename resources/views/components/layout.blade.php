@@ -11,10 +11,12 @@
 
     </head>
     <body
-    class="bg-cover bg-no-repeat bg-center bg-opacity-80 min-h-screen"
+    class="bg-cover bg-no-repeat bg-center bg-opacity-80 min-h-screen flex flex-col justify-between"
     data-bg-image="{{ asset('images/bg.jpg') }}">
         @include('layouts.navbar')
-        {{ $slot }} 
+        <main class="grow py-10 px-40 bg-white/50">
+            {{ $slot }} 
+        </main>
         @include('layouts.footer')
     </body>
     <script>

@@ -1,5 +1,5 @@
 <x-layout>
-    <main class="w-full min-h-svh px-40 bg-white/50 text-lg text-slate-900 py-5">
+    <main class="text-lg text-slate-900 >
         <h1 class="text-lg">List of Submissions</h1>
         <form action="{{ route('requests.index') }}" method="get" class="text-xs flex justify-between items-center w-full h-20">
             <label for="search" class="flex items-center gap-x-2 bg-white rounded-md p-2 w-[30rem]">
@@ -43,9 +43,9 @@
                     <th class="text-center text-sky-900 p-3">Status</th>
                 </tr>
             </thead>
-            <tbody class="text-xs">
+            <tbody>
                 @forelse ($requests as $index => $request)
-                    <tr onclick="window.location.href = '{{ route('requests.update', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
+                    <tr onclick="window.location.href = '{{ route('requests.edit', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
                         <td class="p-3 text-sky-700">{{ strtoupper($request->tracking_no) }}</td>
                         <td class="p-3">{{ $request->name }}</td>
                         <td class="p-3">{{ $request->service->name }}</td>

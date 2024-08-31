@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('status')->default('For review');
             $table->string('tracking_no')->unique();
+            $table->text('message')->nullable();
             $table->json('files_path');
             $table->timestamps();
 

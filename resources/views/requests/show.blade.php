@@ -1,6 +1,6 @@
 <x-layout>
     <header class="text-center h-24 py-3 bg-sky-900 text-white text-4xl font-medium tracking-wide flex items-center justify-center">
-        <form action="{{ route('requests.show') }}" method="get" class="w-1/2 flex items-center gap-x-3">
+        <form action="{{ route('applications.show') }}" method="get" class="w-1/2 flex items-center gap-x-3">
             <input type="search"
             name="search"
             placeholder="Input tracking number"
@@ -14,7 +14,7 @@
             </button>
         </form>
     </header>
-    <main class="w-full min-h-svh px-60 pt-10 bg-white/50 text-lg text-slate-900 pb-5">
+    <main class="pt-10 text-lg text-slate-900">
         @if(request('search') || request('search') != '')
             @if ($request)
                 <table class="text-sm w-full shadow-md">

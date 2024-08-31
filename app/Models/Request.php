@@ -23,6 +23,7 @@ class Request extends Model
         'contact',
         'email',
         'status',
+        'message',
         'tracking_no',
         'files_path',
         'service_id',

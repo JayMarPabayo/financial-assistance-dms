@@ -20,7 +20,7 @@
                     Services
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('services.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
-                <a href="{{ route('requests.show') }}" class="relative group">
+                <a href="{{ route('applications.show') }}" class="relative group">
                     Applications
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>

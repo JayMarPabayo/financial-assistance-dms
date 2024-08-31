@@ -1,5 +1,5 @@
 <x-layout>
-    <main class="w-full min-h-svh px-40 pt-10 bg-white/50 text-lg text-slate-800 pb-10">
+    <main class="text-lg text-slate-800">
         <div class="flex h-full w-full text-base">
             <section class="grow px-8">
                 <div class="w-full h-96 mb-10">
