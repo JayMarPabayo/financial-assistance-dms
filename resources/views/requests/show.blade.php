@@ -39,6 +39,11 @@
                         </tr>
                     </tbody>
                 </table>
+                @if ($request->status === "Rejected")
+                    <div class="text-xs font-semibold mt-5 p-3 rounded-md bg-red-500/30 border border-red-700">
+                        {!! nl2br(e($request->message)) !!}
+                    </div>
+                @endif
             @else
                 <div class="text-center py-20">
                     <h2 class="text-2xl font-semibold text-slate-700">Request Not Found</h2>

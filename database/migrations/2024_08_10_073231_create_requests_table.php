@@ -22,7 +22,7 @@ return new class extends Migration
             $table->text('message')->nullable();
             $table->json('files_path');
             $table->timestamps();
-
+            $table->foreignId('user_id')->nullable();
             $table->foreignId('service_id')->constrained()->cascadeOnDelete();
         });
     }

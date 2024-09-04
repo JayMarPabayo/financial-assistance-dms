@@ -42,3 +42,7 @@ select {
 .error {
     @apply text-xs text-red-500;
 }
+
+[x-cloak] {
+    display: none;
+}

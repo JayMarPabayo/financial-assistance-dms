@@ -34,9 +34,9 @@
                     Requests
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
-                <a href="#" class="relative group">
+                <a href="{{ route('transactions.index') }}" class="relative group">
                     Transactions
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 w-0 group-hover:w-full"></span>
+                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('transactions.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
                 <a href="#" class="relative group">
                     Profile

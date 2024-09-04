@@ -48,7 +48,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('services/{service:slug}', function (RequestRequest $request, $slug) {
         $service = Service::where('slug', $slug)->firstOrFail();
-
         $data = $request->validated();
 
         if ($request->has('files_path')) {
@@ -73,6 +72,7 @@ Route::middleware('guest')->group(function () {
         return redirect($redirectUrl);
     })->name('applications.post');
 
+
     Route::get('applications', [RequestController::class, 'show'])->name('applications.show');
 });
 
@@ -90,6 +90,20 @@ Route::middleware('auth')->group(function () {
     })->name('auth.logout');
 
     Route::resource('requests', RequestController::class);
+
+    Route::get('transactions', function (Request $request) {
+        $searchKey = $request->input('search');
+        $service = $request->input('filter');
+        $sort = $request->input('sort');
+
+        $serviceId = Service::where('name', $service)->first()?->id;
+
+        $requests = RequestModel::where('user_id', Auth::id())->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+            ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
+            ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+            ->paginate(15);
+        return view('transactions.index', ['requests' => $requests, 'services' => Service::all()]);
+    })->name('transactions.index');
 
     Route::put('requests-submit', [RequestController::class, 'submit'])->name('applications.submit');
 

@@ -29,6 +29,7 @@ class RequestFactory extends Factory
             'message' => '',
             'files_path' => json_encode([]),
             'service_id' => $serviceId,
+            'user_id' => null,
         ];
     }
 }

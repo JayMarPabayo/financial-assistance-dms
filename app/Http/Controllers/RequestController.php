@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
@@ -19,7 +20,7 @@ class RequestController extends Controller
 
         $serviceId = Service::where('name', $service)->first()?->id;
 
-        $requests = RequestModel::when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+        $requests = RequestModel::where('status', 'For review')->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
             ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
             ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
             ->paginate(15);
@@ -79,6 +80,7 @@ class RequestController extends Controller
         $trackedRequest = RequestModel::where('tracking_no', $request->input('tracking'))->firstOrFail();
         $trackedRequest->message = $request->input('message');
         $trackedRequest->status = 'Rejected';
+        $trackedRequest->user_id = Auth::id();
         $trackedRequest->save();
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
     }
@@ -97,6 +99,7 @@ class RequestController extends Controller
         $trackedRequest = RequestModel::where('tracking_no', $request->input('tracking'))->firstOrFail();
         $trackedRequest->status = 'For approval';
         $trackedRequest->message = '';
+        $trackedRequest->user_id = Auth::id();
         $trackedRequest->save();
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
     }
