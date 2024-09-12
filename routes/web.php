@@ -74,6 +74,16 @@ Route::middleware('guest')->group(function () {
 
 
     Route::get('applications', [RequestController::class, 'show'])->name('applications.show');
+
+    Route::get('applications/{tracking}', function (string $tracking) {
+        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+        return view('requests.client-edit', ['request' => $request]);
+    })->name('applications.edit');
+
+    Route::put('applications/{tracking}', function (string $tracking) {
+        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+        return view('applications.show', $request);
+    })->name('applications.update');
 });
 
 Route::middleware('auth')->group(function () {

@@ -28,7 +28,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if ($request->status === "Rejected")
+                        <tr  onclick="window.location.href = '{{ route('applications.edit', $request->tracking_no) }}'" class="border border-slate-500/50 cursor-pointer hover:bg-white/90 duration-300">
+                        @else
                         <tr class="border border-slate-500/50">
+                        @endif
                             <td class="py-2 px-3">{{ strtoupper($request->tracking_no) }}</td>
                             <td class="py-2 px-3">{{ $request->name }}</td>
                             <td class="py-2 px-3">{{ $request->service->name }}</td>
