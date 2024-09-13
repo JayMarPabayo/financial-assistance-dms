@@ -20,7 +20,7 @@ class RequestController extends Controller
 
         $serviceId = Service::where('name', $service)->first()?->id;
 
-        $requests = RequestModel::where('status', 'For review')->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+        $requests = RequestModel::where('user_id', null)->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
             ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
             ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
             ->paginate(15);

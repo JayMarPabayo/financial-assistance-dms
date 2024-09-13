@@ -16,7 +16,7 @@
         </header>
 
         <section class="rounded-md p-3 bg-white/50 text-sm mb-5">
-            <form action="{{ route('applications.update', $request) }}"
+            <form action="{{ route('applications.update', $request->tracking_no) }}"
             method="POST"
             enctype="multipart/form-data"
             class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md">
@@ -27,6 +27,7 @@
                         Edit Request
                     </span>
                 </div>
+                <input type="hidden" name="tracking_no" value="{{ $request->tracking_no }}">
                 <div class="block">
                     <label for="name" class="mb-1">Applicant</label>
                     @error('name')
@@ -74,7 +75,7 @@
                     @enderror
                 </div>
                 <input type="file" name="files_path[]" id="file-input" multiple="multiple" class="w-full">
-
+                <input type="hidden" name="files_to_remove">
                 <p id="file-names" class="mt-2 text-sky-700"></p>
 
                 <button type="submit" class="btn-primary mt-5">Submit</button>
@@ -84,8 +85,10 @@
     <script>
         const fileInput = document.getElementById('file-input');
         const fileNamesDisplay = document.getElementById('file-names');
+        const filesToRemoveInput = document.querySelector('input[name="files_to_remove"]');
         let filesArray = [];
 
+        // Initialize the files array with existing files
         const existingFiles = @json(json_decode($request->files_path) ?? []);
 
         existingFiles.forEach(file => {
@@ -111,8 +114,6 @@
             const dataTransfer = new DataTransfer();
             filesArray.filter(file => !file.existing).forEach(file => dataTransfer.items.add(file));
             fileInput.files = dataTransfer.files;
-
-            console.log(filesArray);
         });
 
         function renderFileList() {
@@ -138,6 +139,15 @@
         }
 
         function removeFile(fileId) {
+            const fileToRemove = filesArray.find(file => file.id === fileId);
+
+            // Add the file name to the hidden input if it is an existing file
+            if (fileToRemove && fileToRemove.existing) {
+                const filesToRemove = filesToRemoveInput.value ? filesToRemoveInput.value.split(',') : [];
+                filesToRemove.push(fileToRemove.name);
+                filesToRemoveInput.value = filesToRemove.join(',');
+            }
+
             filesArray = filesArray.filter(file => file.id !== fileId);
             renderFileList();
 
@@ -145,6 +155,7 @@
             filesArray.filter(file => !file.existing).forEach(file => dataTransfer.items.add(file));
             fileInput.files = dataTransfer.files;
         }
+
     </script>
 </x-layout>
 

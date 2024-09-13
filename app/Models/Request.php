@@ -35,10 +35,6 @@ class Request extends Model
 
         static::creating(function ($request) {
 
-            if (empty($request->tracking_no)) {
-                $request->tracking_no = uniqid();
-            }
-
             if (empty($request->status)) {
                 $request->status = "For review";
             }

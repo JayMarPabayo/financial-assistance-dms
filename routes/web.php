@@ -6,6 +6,7 @@ use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
@@ -49,12 +50,14 @@ Route::middleware('guest')->group(function () {
     Route::post('services/{service:slug}', function (RequestRequest $request, $slug) {
         $service = Service::where('slug', $slug)->firstOrFail();
         $data = $request->validated();
+        $data['tracking_no'] = uniqid();
+
 
         if ($request->has('files_path')) {
             $filePaths = [];
 
             foreach ($request->file('files_path') as $file) {
-                $filename = $file->getClientOriginalName();
+                $filename =  $data['tracking_no'] . '-' . $file->getClientOriginalName();
                 $path = $file->storeAs('attachments', $filename, 'private');
                 $filePaths[] = $path;
             }
@@ -80,9 +83,45 @@ Route::middleware('guest')->group(function () {
         return view('requests.client-edit', ['request' => $request]);
     })->name('applications.edit');
 
-    Route::put('applications/{tracking}', function (string $tracking) {
-        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
-        return view('applications.show', $request);
+    Route::put('applications/{tracking}', function (RequestRequest $request) {
+        $requestToUpdate = RequestModel::where('tracking_no', $request->input('tracking_no'))->firstOrFail();
+
+        $existingFilesPath = json_decode($requestToUpdate->files_path, true) ?? [];
+
+        $finalFiles = "[]";
+        if ($request->has('files_path')) {
+            $filePaths = [];
+
+            foreach ($request->file('files_path') as $file) {
+                $filename =  $requestToUpdate->tracking_no . '-' . $file->getClientOriginalName();
+                $path = $file->storeAs('attachments', $filename, 'private');
+                $filePaths[] = $path;
+            }
+
+
+            $finalFiles = json_encode($filePaths);
+        }
+
+        $removedFiles = explode(',', $request->input('files_to_remove'));
+        // Delete each file in the removedFiles array from the storage
+        foreach ($removedFiles as $file) {
+            if (Storage::disk('private')->exists($file)) {
+                Storage::disk('private')->delete($file);
+            }
+        }
+
+        $existingFilesPath = array_diff($existingFilesPath, $removedFiles);
+
+        $mergedPaths = array_merge($existingFilesPath, json_decode($finalFiles));
+
+        $request['files_path'] = json_encode($mergedPaths);
+        $data = $request->validated();
+
+        $data['status'] = 'For review';
+
+        $requestToUpdate->update($data);
+        $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
+        return redirect($redirectUrl);
     })->name('applications.update');
 });
 

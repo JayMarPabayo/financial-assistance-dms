@@ -58,8 +58,8 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="100%" class="py-20">
-                            <span>
+                        <td colspan="100%" class="text-center py-20">
+                            <span class="text-rose-600 font-medium">
                                 Empty
                             </span>
                         </td>
