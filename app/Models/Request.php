@@ -38,6 +38,10 @@ class Request extends Model
             if (empty($request->status)) {
                 $request->status = "For review";
             }
+
+            if (empty($request->tracking_no)) {
+                $request->tracking_no = uniqid();
+            }
         });
     }
 

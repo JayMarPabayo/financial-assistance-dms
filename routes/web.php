@@ -5,9 +5,11 @@ use App\Http\Controllers\RequestController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
 
@@ -64,6 +66,8 @@ Route::middleware('guest')->group(function () {
 
 
             $data['files_path'] = json_encode($filePaths);
+        } else {
+            $data['files_path'] = "[]";
         }
 
         $data['status'] = 'For review';
@@ -110,14 +114,16 @@ Route::middleware('guest')->group(function () {
             }
         }
 
+
         $existingFilesPath = array_diff($existingFilesPath, $removedFiles);
 
         $mergedPaths = array_merge($existingFilesPath, json_decode($finalFiles));
 
-        $request['files_path'] = json_encode($mergedPaths);
+        $request['files_path'] = [];
         $data = $request->validated();
 
         $data['status'] = 'For review';
+        $data['files_path'] = json_encode($mergedPaths);
 
         $requestToUpdate->update($data);
         $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
@@ -130,6 +136,48 @@ Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return redirect()->route('requests.index');
     });
+
+    Route::get('profile', function () {
+        return view('profile.index');
+    })->name('profile.index');
+
+    Route::put('profile', function (Request $request) {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => "required|string|max:255|unique:users,username,$user->id", // Ensure the username is unique except for the current user
+        ]);
+
+        /** @disregard [OPTIONAL CODE] [OPTIONAL DESCRIPTION] */
+        $user->update([
+            'name' => $request->name,
+            'username' => $request->username,
+        ]);
+
+        return redirect()->route('profile.index')->with('info_status', 'Profile updated successfully');
+    })->name('profile.update');
+
+    Route::put('profile/password', function (Request $request) {
+        $user = Auth::user();
+        // Check if current password matches
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password does not match.']);
+        }
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|string|confirmed',
+        ]);
+
+        /** @disregard [OPTIONAL CODE] [OPTIONAL DESCRIPTION] */
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('profile.index')->with('status', 'Password updated successfully');
+    })->name('profile.password');
+
 
     Route::delete('auth/logout', function () {
         Auth::logout();
@@ -153,6 +201,11 @@ Route::middleware('auth')->group(function () {
             ->paginate(15);
         return view('transactions.index', ['requests' => $requests, 'services' => Service::all()]);
     })->name('transactions.index');
+
+    Route::get('transactions/{tracking}/edit', function (String $tracking) {
+        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+        return view('transactions.edit', ['request' => $request]);
+    })->name('transactions.edit');
 
     Route::put('requests-submit', [RequestController::class, 'submit'])->name('applications.submit');
 

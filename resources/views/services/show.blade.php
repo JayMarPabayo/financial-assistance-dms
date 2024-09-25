@@ -17,14 +17,12 @@
             enctype="multipart/form-data"
             class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md">
                 @csrf
-                <div class="py-2 px-3 bg-sky-900 text-white text-center mb-5">
-                    <span>
-                        Application Form
-                    </span>
+                <div class="py-3 px-3 text-xl text-center font-semibold text-sky-900 border-b border-sky-900/20 mb-5">
+                    APPLICATION FORM
                 </div>
 
                 <input type="hidden" name="service_id" value="{{ $service->id }}">
-                <div class="block">
+                <div class="block mb-1">
                     <label for="name" class="mb-1">Applicant</label>
                     @error('name')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -34,7 +32,7 @@
                 </div>
                 <input type="text" name="name" placeholder="Input full name" value="{{ old('name') }}" class="w-1/2">
 
-                <div class="block">
+                <div class="block mb-1">
                     <label for="address" class="mb-1">Address</label>
                     @error('address')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -44,7 +42,7 @@
                 </div>
                 <input type="text" name="address" placeholder="Input full address" value="{{ old('address') }}" class="w-3/4">
 
-                <div class="block">
+                <div class="block mb-1">
                     <label for="contact" class="mb-1">Contact No.</label>
                     @error('contact')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -54,7 +52,7 @@
                 </div>
                 <input type="text" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact') }}" class="w-1/2">
 
-                <div class="block">
+                <div class="block mb-1">
                     <label for="email" class="mb-1">Email</label>
                     @error('email')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -64,7 +62,7 @@
                 </div>
                 <input type="email" name="email" placeholder="Email address" value="{{ old('email') }}" class="w-1/2">
 
-                <div class="block">
+                <div class="block mb-1">
                     <label for="files_path" class="mb-1">Attachments (docx, pdf, images)</label>
                     @error('files_path.*')
                         <span class="ms-2 text-xs text-red-600 font-medium">{{ $message }}</span>

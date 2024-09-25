@@ -5,7 +5,7 @@
         alt="Tagoloan logo"
         class="w-14">
         <div class="flex flex-col">
-            <span class="text-lg font-medium">Municipality of Tagoloan</span>
+            <span class="text-lg font-medium">2nd District of Misamis Oriental</span>
             <span class="text-sm text-opacity-70">Provincial Extension Office</span>
         </div>
     </div>
@@ -22,7 +22,7 @@
                 </a>
                 <a href="{{ route('applications.show') }}" class="relative group">
                     Applications
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('applications.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
                 <a href="{{ route('auth.login') }}" class="relative group">
                     Sign in
@@ -38,9 +38,9 @@
                     Transactions
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('transactions.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
-                <a href="#" class="relative group">
+                <a href="{{ route('profile.index') }}" class="relative group">
                     Profile
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 w-0 group-hover:w-full"></span>
+                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('profile.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
                 <form action="{{ route('auth.logout') }}" method="POST" class="relative group">
                     @csrf

@@ -40,7 +40,11 @@ select {
 }
 
 .error {
-    @apply text-xs text-red-500;
+    @apply font-semibold text-xs text-red-500;
+}
+
+.success {
+    @apply font-semibold text-xs text-green-600;
 }
 
 [x-cloak] {

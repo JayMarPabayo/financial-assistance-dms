@@ -6,7 +6,7 @@
         <div class="mt-4 text-base bg-white shadow-md rounded-md"
         >
             <header class="w-full rounded-t-md bg-sky-700 p-2 text-white">
-                <h3>Please Log In</h3>
+                <h3>Staff Log In</h3>
             </header>
             <div class="flex">
                 <div class="max-w-[40%]">

@@ -103,13 +103,14 @@
                     $filename = basename($file);
                     $extension = pathinfo($filename, PATHINFO_EXTENSION);
                 @endphp
+
                 <a
                 href="{{ route('file.download', $filename) }}"
                 title="{{ $filename }}"
                 class="
                     @if($extension === 'pdf') pdf-style @endif
                     @if($extension === 'docx') word-style @endif
-                    @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'PNG'])) image-style @endif
+                    @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'PNG', 'JPG', 'JPEG'])) image-style @endif
                 ">
                     @switch($extension)
                         @case('pdf')
@@ -121,6 +122,7 @@
                         @case('jpg')
                         @case('JPG')
                         @case('jpeg')
+                        @case('JPEG')
                         @case('png')
                         @case('PNG')
                         @case('gif')
@@ -131,7 +133,6 @@
                     @endswitch
                     <span class="text-xs font-medium">
                         {{ $filename }}
-                        
                     </span>
                 </a>
             @empty

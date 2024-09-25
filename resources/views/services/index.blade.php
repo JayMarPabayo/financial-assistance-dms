@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="grid grid-cols-2 gap-x-2">
+    <div class="grid grid-cols-2 gap-5">
         @forelse ($services as $service)
             <div class="col-span-1 bg-stone-100/90 border border-sky-700/80 rounded-md shadow-md py-3 px-4">
                 <h1 class="text-sky-900 text-lg font-semibold">{{ $service->name }}</h1>
