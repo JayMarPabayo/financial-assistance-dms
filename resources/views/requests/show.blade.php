@@ -36,13 +36,35 @@
                             <td class="py-2 px-3">{{ strtoupper($request->tracking_no) }}</td>
                             <td class="py-2 px-3">{{ $request->name }}</td>
                             <td class="py-2 px-3">{{ $request->service->name }}</td>
-                            <td class="py-2 px-3">{{ $request->updated_at->format('d/m/Y') }}</td>
+                            <td class="py-2 px-3">{{ $request->created_at->format('d/m/Y') }}</td>
                             <td class="py-2 px-3 text-center">
                                 <x-status-badge :status="$request->status" />
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                @if (session('prompt'))
+                    <div class="flex items-center justify-center gap-x-3 text-emerald-900 text-sm font-semibold mt-5 p-3 rounded-md bg-yellow-300/60 border border-slate-700">
+                        <svg class="fill-emerald-900" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                        width="1.5rem" height="1.5rem" viewBox="0 0 478.125 478.125"
+                        xml:space="preserve">
+                        <g>
+                            <g>
+                                <g>
+                                    <circle cx="239.904" cy="314.721" r="35.878"/>
+                                    <path d="M256.657,127.525h-31.9c-10.557,0-19.125,8.645-19.125,19.125v101.975c0,10.48,8.645,19.125,19.125,19.125h31.9
+                                        c10.48,0,19.125-8.645,19.125-19.125V146.65C275.782,136.17,267.138,127.525,256.657,127.525z"/>
+                                    <path d="M239.062,0C106.947,0,0,106.947,0,239.062s106.947,239.062,239.062,239.062c132.115,0,239.062-106.947,239.062-239.062
+                                        S371.178,0,239.062,0z M239.292,409.734c-94.171,0-170.595-76.348-170.595-170.596c0-94.248,76.347-170.595,170.595-170.595
+                                        s170.595,76.347,170.595,170.595C409.887,333.387,333.464,409.734,239.292,409.734z"/>
+                                </g>
+                            </g>
+                        </g>
+                        </svg>
+                        <p>Please take note of your tracking code: {tracking_code}. You'll need this code to trace the progress of your request.</p>
+                    </div>
+                @endif
+
                 @if ($request->status === "Rejected")
                     <div class="text-xs font-semibold mt-5 p-3 rounded-md bg-red-500/30 border border-red-700">
                         {!! nl2br(e($request->message)) !!}

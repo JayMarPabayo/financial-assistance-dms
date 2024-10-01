@@ -76,7 +76,7 @@ Route::middleware('guest')->group(function () {
 
         $redirectUrl = route('applications.show') . '?search=' . $savedRequest->tracking_no;
 
-        return redirect($redirectUrl);
+        return redirect($redirectUrl)->with('prompt', "Please take note of your tracking code: {tracking_code}. You'll need this code to trace the progress of your request.");
     })->name('applications.post');
 
 

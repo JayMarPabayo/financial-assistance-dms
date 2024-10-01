@@ -39,7 +39,8 @@
                     <th class="text-start text-sky-900 p-3">Financial Service</th>
                     <th class="text-start text-sky-900 p-3">Email</th>
                     <th class="text-start text-sky-900 p-3">Contact</th>
-                    <th class="text-start text-sky-900 p-3">Submitted at</th>
+                    <th class="text-start text-sky-900 p-3">Date Submitted</th>
+                    <th class="text-start text-sky-900 p-3">Time Submitted</th>
                     <th class="text-center text-sky-900 p-3">Status</th>
                 </tr>
             </thead>
@@ -51,7 +52,8 @@
                         <td class="p-3">{{ $request->service->name }}</td>
                         <td class="p-3">{{ $request->email ?? 'N/A' }}</td>
                         <td class="p-3">{{ $request->contact ?? 'N/A' }}</td>
-                        <td class="p-3">{{ $request->updated_at->format('d/m/Y') }}</td>
+                        <td class="p-3">{{ $request->created_at->format('d/m/Y') }}</td>
+                        <td class="p-3">{{ $request->created_at->format('g:i A') }}</td>
                         <td class="p-3 text-center">
                             <x-status-badge :status="$request->status" />
                         </td>
