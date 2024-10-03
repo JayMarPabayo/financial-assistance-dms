@@ -5,8 +5,8 @@
         </p>
         <div class="mt-4 text-base bg-white shadow-md rounded-md"
         >
-            <header class="w-full rounded-t-md bg-sky-700 p-2 text-white">
-                <h3>Staff Log In</h3>
+            <header class="w-full p-2 flex justify-end rounded-t-md bg-sky-700 text-white">
+                <h3 class="mr-56">Staff Log In</h3>
             </header>
             <div class="flex">
                 <div class="max-w-[40%]">

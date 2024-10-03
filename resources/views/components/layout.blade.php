@@ -6,7 +6,7 @@
 
         <title>Financial Assistance Document Management System</title>
         <script src="//unpkg.com/alpinejs" defer></script>
-        <link rel="shortcut icon" href="{{ asset('images/tagoloan-logo.png') }}">
+        <link rel="shortcut icon" href="{{ asset('images/misor.png') }}">
         @vite('resources/css/app.css')
 
     </head>
