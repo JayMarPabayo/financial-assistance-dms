@@ -10,22 +10,6 @@
         <img src="{{ asset('images/DOH.png') }}" class="h-32" alt="DOH Logo">
         <img src="{{ asset('images/DSWD.png') }}" class="h-32" alt="DSWD Logo">
     </section>
-
-    <p class="mb-4 text-justify">
-        In the Philippines, a nation known for its strong sense of community and resilience, Financial and cash assistance programs are more than a safety net; they are a testament to the country’s commitment to caring for its citizen. These programs are design to provide timely and targeted assistance to those who find themselves on the blink of uncertainty, whether due to sudden unemployment, health crisis, or the economic impacts of natural calamities. (assistance.ph 2024)
-    </p>
-    <p class="mb-4 text-justify">
-        The Extension Office provide the requirement for Financial Assistance. After the requirements it will be submitted to the Department of Social Welfare and Development. The DSWD is responsible for the disbursement of the Financial Aid.
-    </p>
-    <div class="w-full h-96 mb-10">
-        <img src="{{ asset('images/banner-2.jpg') }}" alt="Banner" class="object-cover object-top w-full h-full">
-    </div>
-    <p class="mb-4 text-justify">
-        The Extension Office of Tagoloan stands out as a prominent Financial Assistance organization, catering to individuals in need of support. For Filipinos this assistance initiatives hold propound relevance. The problem may occur due to queueing to multiple individuals applying for the Financial Assistance. Also, dealing with many follow up concerns of clients who applied for the Financial Assistance regarding to their requests. The office staff work load will be double while entertaining other clients. In addition, the staffs personal contact number are being asked by the client to get the notification when is the schedule for the applied assistance they need, it is a burden for the staff even on nonworking hours specially on weekend when some clients called just to get the information of what is the status of their assistance.
-    </p>
-    <p class="mb-10 text-justify">
-        This system will streamline operation and reduce the hassle of individuals who take multiple trips for follow-ups. The system will help to provide the list of assistance services such as Burial Assistance, Calamity Assistance, Educational Assistance, Medical Billing Assistance, Transportation Assistance, Medication Assistance and Solicitation and other serving desired assistance. The client may upload the picture copy of the requirements document to fulfill the process. The staff may then verify the completion of all necessary documents uploaded by the applicant. Upon approval, the client may notify a SMS message to schedule a meeting for the client to submit hard copies documents required at the Extension Office. 
-    </p>
     <div class="mb-5 flex items-center gap-x-2">
         <span class="text-xl text-teal-700">►</span><h1 class="font-semibold text-lg">Guide</h1>
     </div>
@@ -44,6 +28,23 @@
         </div>
         <button class="next absolute right-0 z-10 bg-gray-500 text-white px-2 py-1">❯</button>
     </div>
+
+    <p class="mb-4 text-justify">
+        In the Philippines, a nation known for its strong sense of community and resilience, Financial and cash assistance programs are more than a safety net; they are a testament to the country’s commitment to caring for its citizen. These programs are design to provide timely and targeted assistance to those who find themselves on the blink of uncertainty, whether due to sudden unemployment, health crisis, or the economic impacts of natural calamities. (assistance.ph 2024)
+    </p>
+    <p class="mb-4 text-justify">
+        The Extension Office provide the requirement for Financial Assistance. After the requirements it will be submitted to the Department of Social Welfare and Development. The DSWD is responsible for the disbursement of the Financial Aid.
+    </p>
+    <div class="w-full h-96 mb-10">
+        <img src="{{ asset('images/banner-2.jpg') }}" alt="Banner" class="object-cover object-top w-full h-full">
+    </div>
+    <p class="mb-4 text-justify">
+        The Extension Office of Tagoloan stands out as a prominent Financial Assistance organization, catering to individuals in need of support. For Filipinos this assistance initiatives hold propound relevance. The problem may occur due to queueing to multiple individuals applying for the Financial Assistance. Also, dealing with many follow up concerns of clients who applied for the Financial Assistance regarding to their requests. The office staff work load will be double while entertaining other clients. In addition, the staffs personal contact number are being asked by the client to get the notification when is the schedule for the applied assistance they need, it is a burden for the staff even on nonworking hours specially on weekend when some clients called just to get the information of what is the status of their assistance.
+    </p>
+    <p class="mb-10 text-justify">
+        This system will streamline operation and reduce the hassle of individuals who take multiple trips for follow-ups. The system will help to provide the list of assistance services such as Burial Assistance, Calamity Assistance, Educational Assistance, Medical Billing Assistance, Transportation Assistance, Medication Assistance and Solicitation and other serving desired assistance. The client may upload the picture copy of the requirements document to fulfill the process. The staff may then verify the completion of all necessary documents uploaded by the applicant. Upon approval, the client may notify a SMS message to schedule a meeting for the client to submit hard copies documents required at the Extension Office. 
+    </p>
+
 </x-layout>
 
 <style>
