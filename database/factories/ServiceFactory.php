@@ -22,6 +22,7 @@ class ServiceFactory extends Factory
             'description' => fake()->sentence(20),
             'eligibility' => fake()->sentence(15),
             'requirements' => fake()->paragraph(3),
+            'numberOfRequirements' => fake()->numberBetween(4, 6),
             'status' => fake()->randomElement(Service::$serviceStatus)
         ];
     }

@@ -130,8 +130,7 @@
                         <x-carbon-document-pdf title="{{ $filename }}" class="w-6"/>
                     @endswitch
                     <span class="text-xs font-medium">
-                        {{ $filename }}
-                        
+                        {{ substr($filename, 14) }}
                     </span>
                 </a>
             @empty

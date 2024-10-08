@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('eligibility');
             $table->text('requirements');
+            $table->integer('numberOfRequirements');
             $table->string('status');
             $table->string('slug')->unique();
             $table->timestamps();

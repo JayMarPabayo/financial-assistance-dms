@@ -15,7 +15,8 @@
             <form action="{{ route('applications.post', $service) }}"
             method="POST"
             enctype="multipart/form-data"
-            class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md">
+            class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md"
+            id="application-form">
                 @csrf
                 <div class="py-3 px-3 text-xl text-center font-semibold text-sky-900 border-b border-sky-900/20 mb-5">
                     APPLICATION FORM
@@ -72,6 +73,8 @@
 
                 <p id="file-names" class="mt-2 text-sky-700"></p>
 
+                <p class="error hidden" id="file-error">You must upload at least {{ $service->numberOfRequirements }} files.</p>
+                
                 <button type="submit" class="btn-primary mt-5">Submit</button>
             </form>
         </div>
@@ -80,6 +83,10 @@
     <script>
         const fileInput = document.getElementById('file-input');
         const fileNamesDisplay = document.getElementById('file-names');
+        const fileError = document.getElementById('file-error');
+        const applicationForm = document.getElementById('application-form');
+        const numberOfRequirements = {{ $service->numberOfRequirements }};
+
         let filesArray = [];
     
         fileInput.addEventListener('change', function(event) {
@@ -128,6 +135,17 @@
 
             fileInput.files = dataTransfer.files;
         }
+
+        applicationForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if(filesArray.length < numberOfRequirements) {
+                fileError.classList.remove('hidden');
+            } else {
+                fileError.classList.add('hidden');
+                applicationForm.submit();
+            }
+        })
     </script>
 </x-layout>
 

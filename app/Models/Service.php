@@ -11,6 +11,15 @@ class Service extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description',
+        'eligibility',
+        'requirements',
+        'numberOfRequirements',
+        'status',
+    ];
+
     public function requests(): HasMany
     {
         return $this->hasMany(Request::class);

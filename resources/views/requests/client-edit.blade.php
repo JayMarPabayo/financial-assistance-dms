@@ -19,7 +19,8 @@
             <form action="{{ route('applications.update', $request->tracking_no) }}"
             method="POST"
             enctype="multipart/form-data"
-            class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md">
+            class="px-5 pb-10 pt-5 mt-4 text-base bg-white shadow-md rounded-md"
+            id="application-form">
                 @method('PUT')
                 @csrf
                 <div class="py-2 px-3 bg-sky-900 text-white text-center mb-5">
@@ -77,7 +78,7 @@
                 <input type="file" name="files_path[]" id="file-input" multiple="multiple" class="w-full">
                 <input type="hidden" name="files_to_remove">
                 <p id="file-names" class="mt-2 text-sky-700"></p>
-
+                <p class="error hidden" id="file-error">You must upload at least {{ $request->service->numberOfRequirements }} files.</p>
                 <button type="submit" class="btn-primary mt-5">Submit</button>
             </form>
         </section>
@@ -86,6 +87,12 @@
         const fileInput = document.getElementById('file-input');
         const fileNamesDisplay = document.getElementById('file-names');
         const filesToRemoveInput = document.querySelector('input[name="files_to_remove"]');
+
+        const fileError = document.getElementById('file-error');
+        const applicationForm = document.getElementById('application-form');
+        const numberOfRequirements = {{ $request->service->numberOfRequirements }};
+
+
         let filesArray = [];
 
         // Initialize the files array with existing files
@@ -156,6 +163,16 @@
             fileInput.files = dataTransfer.files;
         }
 
+        applicationForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if(filesArray.length < numberOfRequirements) {
+                fileError.classList.remove('hidden');
+            } else {
+                fileError.classList.add('hidden');
+                applicationForm.submit();
+            }
+        })
     </script>
 </x-layout>
 
