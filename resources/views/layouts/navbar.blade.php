@@ -30,14 +30,26 @@
                 </a>
             @endguest
             @auth
-                <a href="{{ route('requests.index') }}" class="relative group">
-                    Requests
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
-                </a>
-                <a href="{{ route('transactions.index') }}" class="relative group">
-                    Transactions
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('transactions.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
-                </a>
+
+                @if (Auth::check() && Auth::user()->role === 'Staff')
+                    <a href="{{ route('requests.index') }}" class="relative group">
+                        Requests
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                    <a href="{{ route('transactions.index') }}" class="relative group">
+                        Transactions
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('transactions.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                @else
+                    <a href="{{ route('admin.index') }}" class="relative group">
+                        Submissions
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                    <a href="{{ route('schedules.index') }}" class="relative group">
+                        Schedules
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('schedules.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                @endif
                 <a href="{{ route('profile.index') }}" class="relative group">
                     Profile
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('profile.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>

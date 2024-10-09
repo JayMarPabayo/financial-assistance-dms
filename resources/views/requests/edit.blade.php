@@ -22,9 +22,9 @@
                             <div class="bg-white rounded-lg p-5 min-w-96 text-start">
                                 <p class="text-lg text-sky-800 font-medium mb-4">Confirm Submission</p>
                                 <hr class="border-t-2 mb-4">
-                                <div class="flex justify-end gap-x-4">
-                                <button @click.prevent="showConfirm = false" class="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
-                                <button @click.prevent="document.getElementById('submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Submit</button>
+                                <div class="flex justify-end gap-x-4 text-sm">
+                                    <button @click.prevent="showConfirm = false" class="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
+                                    <button @click.prevent="document.getElementById('submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Submit</button>
                                 </div>
                             </div>
                         </div>

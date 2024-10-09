@@ -27,6 +27,14 @@ select {
     @apply bg-slate-100 py-2 px-5 rounded-md text-xs text-center text-slate-700 font-medium hover:bg-slate-100/50;
 }
 
+.btn-reject {
+    @apply bg-rose-700 py-2 px-5 rounded-md text-xs text-center text-white font-medium hover:bg-rose-700/80;
+}
+
+.btn-approve {
+    @apply bg-slate-800 py-2 w-44 rounded-md text-sm text-center text-white font-medium hover:bg-slate-800/80;
+}
+
 .pdf-style {
     @apply bg-rose-500 max-w-20 truncate text-white p-3 rounded-md shadow-sm hover:shadow-lg duration-300 hover:scale-105 active:scale-95;
 }

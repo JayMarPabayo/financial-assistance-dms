@@ -1,7 +1,7 @@
 <x-layout>
-    <main class="text-lg text-slate-900 >
-        <h1 class="text-lg">List of Submissions</h1>
-        <form action="{{ route('requests.index') }}" method="get" class="text-xs flex justify-between items-center w-full h-20">
+    <main class="text-lg text-slate-900">
+        <h1 class="text-lg">List of your Transactions</h1>
+        <form action="{{ route('schedules.index') }}" method="get" class="text-xs flex justify-between items-center w-full h-20">
             <label for="search" class="flex items-center gap-x-2 bg-white rounded-md p-2 w-[30rem]">
                 <x-carbon-search style="width: 1rem;" />
                 <input type="search"
@@ -16,13 +16,13 @@
                     <option value="" hidden selected>Filter by</option>
                     <option value="">All Services</option>
                    @foreach ($services as $service)
-                   <option value="{{ strtolower($service->name) }}" @selected( request('filter') === strtolower($service->name) )>{{ $service->name }}</option>
+                   <option value="{{ strtolower($service->name) }}" @selected( request('filter') === $service->name )>{{ $service->name }}</option>
                    @endforeach
                 </select>
                 <select name="sort">
                     <option value="" disabled hidden selected>Sort by</option>
                     <option value="name" @selected( request('sort') === 'name' )>Name</option>
-                    <option value="created_at" @selected( request('sort') === 'created_at' )>Submission</option>
+                    <option value="created_at" @selected( request('sort') === 'created_at' )>Date</option>
                 </select>
                 <button type="submit" class="btn-secondary">
                     Apply
@@ -37,26 +37,20 @@
                     <th class="text-start text-sky-900 p-3">Tracking No.</th>
                     <th class="text-start text-sky-900 p-3">Applicant</th>
                     <th class="text-start text-sky-900 p-3">Financial Service</th>
-                    <th class="text-start text-sky-900 p-3">Email</th>
-                    <th class="text-start text-sky-900 p-3">Contact</th>
-                    <th class="text-start text-sky-900 p-3">Date Submitted</th>
-                    <th class="text-start text-sky-900 p-3">Time Submitted</th>
-                    <th class="text-center text-sky-900 p-3">Status</th>
+                    <th class="text-start text-sky-900 p-3">Date Approved</th>
+                    <th class="text-start text-sky-900 p-3">Meeting Date</th>
+                    <th class="text-start text-sky-900 p-3">Meeting Time</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse ($requests as $index => $request)
-                    <tr onclick="window.location.href = '{{ route('requests.edit', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
-                        <td class="p-3 text-sky-700">{{ strtoupper($request->tracking_no) }}</td>
-                        <td class="p-3">{{ $request->name }}</td>
-                        <td class="p-3">{{ $request->service->name }}</td>
-                        <td class="p-3">{{ $request->email ?? 'N/A' }}</td>
-                        <td class="p-3">{{ $request->contact ?? 'N/A' }}</td>
-                        <td class="p-3">{{ $request->created_at->format('d/m/Y') }}</td>
-                        <td class="p-3">{{ $request->created_at->format('g:i A') }}</td>
-                        <td class="p-3 text-center">
-                            <x-status-badge :status="$request->status" />
-                        </td>
+                @forelse ($schedules as $index => $schedule)
+                    <tr class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
+                        <td class="p-3 text-sky-700">{{ strtoupper($schedule->tracking_no) }}</td>
+                        <td class="p-3">{{ $schedule->request->name }}</td>
+                        <td class="p-3">{{ $schedule->request->service->name }}</td>
+                        <td class="p-3">{{ $schedule->created_at->format('d/m/Y') }}</td>
+                        <td class="p-3">{{ $schedule->date->format('d/m/Y') }}</td>
+                        <td class="p-3">{{ $schedule->time->format('g:i A') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -69,9 +63,9 @@
                 @endforelse
             </tbody>
         </table>
-        @if ($requests->count())
+        @if ($schedules->count())
         <div class="text-xs mt-4">
-            {{ $requests->links()}}
+            {{ $schedules->links()}}
         </div>
     @endif
     </main>

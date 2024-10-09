@@ -1,7 +1,7 @@
 <x-layout>
-    <main class="text-lg text-slate-900 >
-        <h1 class="text-lg">List of Submissions</h1>
-        <form action="{{ route('requests.index') }}" method="get" class="text-xs flex justify-between items-center w-full h-20">
+    <main class="text-lg text-slate-900">
+        <h1 class="text-lg">For Approval Submissions</h1>
+        <form action="{{ route('admin.index') }}" method="get" class="text-xs flex justify-between items-center w-full h-20">
             <label for="search" class="flex items-center gap-x-2 bg-white rounded-md p-2 w-[30rem]">
                 <x-carbon-search style="width: 1rem;" />
                 <input type="search"
@@ -16,7 +16,7 @@
                     <option value="" hidden selected>Filter by</option>
                     <option value="">All Services</option>
                    @foreach ($services as $service)
-                   <option value="{{ strtolower($service->name) }}" @selected( request('filter') === strtolower($service->name) )>{{ $service->name }}</option>
+                    <option value="{{ strtolower($service->name) }}" @selected( request('filter') === strtolower($service->name) )>{{ $service->name }}</option>
                    @endforeach
                 </select>
                 <select name="sort">
@@ -46,7 +46,7 @@
             </thead>
             <tbody>
                 @forelse ($requests as $index => $request)
-                    <tr onclick="window.location.href = '{{ route('requests.edit', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
+                    <tr onclick="window.location.href = '{{ route('admin.edit', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
                         <td class="p-3 text-sky-700">{{ strtoupper($request->tracking_no) }}</td>
                         <td class="p-3">{{ $request->name }}</td>
                         <td class="p-3">{{ $request->service->name }}</td>
@@ -77,4 +77,3 @@
     </main>
 
 </x-layout>
-

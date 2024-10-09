@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
@@ -134,8 +135,112 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/', function () {
-        return redirect()->route('requests.index');
+        if (Auth::user()->role === "Staff") {
+            return redirect()->route('requests.index');
+        } else {
+            return redirect()->route('admin.index');
+        }
     });
+
+    // For Staff
+    Route::middleware('role:Staff')->group(function () {
+
+        Route::resource('requests', RequestController::class);
+
+        Route::get('transactions', function (Request $request) {
+            $searchKey = $request->input('search');
+            $service = $request->input('filter');
+            $sort = $request->input('sort');
+
+            $serviceId = Service::where('name', $service)->first()?->id;
+
+            $requests = RequestModel::where('user_id', Auth::id())->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+                ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
+                ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+                ->paginate(15);
+            return view('transactions.index', ['requests' => $requests, 'services' => Service::all()]);
+        })->name('transactions.index');
+
+        Route::get('transactions/{tracking}/edit', function (String $tracking) {
+            $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+            return view('transactions.edit', ['request' => $request]);
+        })->name('transactions.edit');
+
+        Route::put('requests-submit', [RequestController::class, 'submit'])->name('applications.submit');
+
+        Route::put('requests-submit-cancel', [RequestController::class, 'cancelSubmit'])->name('applications.submit.cancel');
+
+        Route::put('requests-reject', [RequestController::class, 'reject'])->name('applications.reject');
+
+        Route::put('requests-reject-cancel', [RequestController::class, 'cancelReject'])->name('applications.cancel.reject');
+
+        Route::get('download/{filename}', function ($filename) {
+            $filePath = storage_path("app/private/attachments/{$filename}");
+
+            if (file_exists($filePath)) {
+                return response()->download($filePath);
+            } else {
+                abort(404, 'File not found.');
+            }
+        })->name('file.download');
+
+        Route::get('download-zip/{tracking}', function ($tracking) {
+            $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+
+            $files = json_decode($request->files_path, true);
+
+            if (empty($files)) {
+                abort(404, 'No files found.');
+            }
+
+            $zipFileName = "attachments-{$request->tracking_no}.zip";
+            $zipPath = storage_path("app/private/attachments/{$zipFileName}");
+
+            $zip = new ZipArchive;
+
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+                foreach ($files as $file) {
+                    $filePath = storage_path('app/private/attachments/' . basename($file));
+                    if (file_exists($filePath)) {
+                        $zip->addFile($filePath, basename($file));
+                    }
+                }
+                $zip->close();
+            } else {
+                abort(500, 'Could not create ZIP file.');
+            }
+
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        })->name('files.downloadZip');
+    });
+
+    // For Admin
+    Route::middleware('role:Administrator')->group(function () {
+
+        Route::get('submissions', function (Request $request) {
+            $searchKey = $request->input('search');
+            $service = $request->input('filter');
+            $sort = $request->input('sort');
+
+            $serviceId = Service::where('name', $service)->first()?->id;
+
+            $requests = RequestModel::where('status', "For Approval")->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+                ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
+                ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+                ->paginate(15);
+            return view('admin.index', ['requests' => $requests, 'services' => Service::all()]);
+        })->name('admin.index');
+
+        Route::get('submissions/{tracking}', function (String $tracking) {
+            $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+            return view('admin.edit', ['request' => $request]);
+        })->name('admin.edit');
+
+        Route::resource('schedules', ScheduleController::class);
+    });
+
+
+
 
     Route::get('profile', function () {
         return view('profile.index');
@@ -185,72 +290,4 @@ Route::middleware('auth')->group(function () {
         AuthRequest::session()->regenerateToken();
         return redirect('/');
     })->name('auth.logout');
-
-    Route::resource('requests', RequestController::class);
-
-    Route::get('transactions', function (Request $request) {
-        $searchKey = $request->input('search');
-        $service = $request->input('filter');
-        $sort = $request->input('sort');
-
-        $serviceId = Service::where('name', $service)->first()?->id;
-
-        $requests = RequestModel::where('user_id', Auth::id())->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
-            ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
-            ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
-            ->paginate(15);
-        return view('transactions.index', ['requests' => $requests, 'services' => Service::all()]);
-    })->name('transactions.index');
-
-    Route::get('transactions/{tracking}/edit', function (String $tracking) {
-        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
-        return view('transactions.edit', ['request' => $request]);
-    })->name('transactions.edit');
-
-    Route::put('requests-submit', [RequestController::class, 'submit'])->name('applications.submit');
-
-    Route::put('requests-submit-cancel', [RequestController::class, 'cancelSubmit'])->name('applications.submit.cancel');
-
-    Route::put('requests-reject', [RequestController::class, 'reject'])->name('applications.reject');
-
-    Route::put('requests-reject-cancel', [RequestController::class, 'cancelReject'])->name('applications.cancel.reject');
-
-    Route::get('download/{filename}', function ($filename) {
-        $filePath = storage_path("app/private/attachments/{$filename}");
-
-        if (file_exists($filePath)) {
-            return response()->download($filePath);
-        } else {
-            abort(404, 'File not found.');
-        }
-    })->name('file.download');
-
-    Route::get('download-zip/{tracking}', function ($tracking) {
-        $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
-
-        $files = json_decode($request->files_path, true);
-
-        if (empty($files)) {
-            abort(404, 'No files found.');
-        }
-
-        $zipFileName = "attachments-{$request->tracking_no}.zip";
-        $zipPath = storage_path("app/private/attachments/{$zipFileName}");
-
-        $zip = new ZipArchive;
-
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            foreach ($files as $file) {
-                $filePath = storage_path('app/private/attachments/' . basename($file));
-                if (file_exists($filePath)) {
-                    $zip->addFile($filePath, basename($file));
-                }
-            }
-            $zip->close();
-        } else {
-            abort(500, 'Could not create ZIP file.');
-        }
-
-        return response()->download($zipPath)->deleteFileAfterSend(true);
-    })->name('files.downloadZip');
 });
