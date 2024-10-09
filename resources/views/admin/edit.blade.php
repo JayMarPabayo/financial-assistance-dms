@@ -122,7 +122,7 @@
         </section>
 
         <section class="rounded-md p-3 bg-white/50 text-sm mb-5">
-            <form action="{{ route('schedules.store') }}" method="post">
+            <form action="{{ route('schedules.store') }}" method="post" id="submit-form">
                 @csrf
                 <div class="flex items-start justify-between gap-x-4">
                     <section>

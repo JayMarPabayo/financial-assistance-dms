@@ -12,18 +12,9 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $searchKey = $request->input('search');
-        $service = $request->input('filter');
-        $sort = $request->input('sort');
-
-        $serviceId = Service::where('name', $service)->first()?->id;
-
-        $schedules = Schedule::where('user_id', Auth::id())->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
-            ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
-            ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
-            ->paginate(15);
+        $schedules = Schedule::where('user_id', Auth::id())->paginate(15);
         return view('admin.schedules', ['schedules' => $schedules, 'services' => Service::all()]);
     }
 
@@ -48,6 +39,10 @@ class ScheduleController extends Controller
         ]);
 
         $validated['user_id'] = Auth::user()->id;
+
+        Schedule::create($validated);
+
+        return redirect()->route('schedules.index')->with('success', 'New request has been approved.');
     }
 
     /**
