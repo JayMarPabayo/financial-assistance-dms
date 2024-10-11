@@ -43,11 +43,19 @@
                 @else
                     <a href="{{ route('admin.index') }}" class="relative group">
                         Submissions
-                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.index')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                     </a>
                     <a href="{{ route('schedules.index') }}" class="relative group">
                         Schedules
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('schedules.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                    <a href="{{ route('admin.services') }}" class="relative group">
+                        Services
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.services*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
+                    <a href="{{ route('users.index') }}" class="relative group">
+                        Users
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('users.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                     </a>
                 @endif
                 <a href="{{ route('profile.index') }}" class="relative group">
@@ -65,7 +73,7 @@
                     <div x-cloak x-show="showConfirmation" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                         <div class="bg-white p-4 rounded-lg shadow">
                             <p class="text-center font-medium text-teal-800 mb-5">Are you sure you want to log out?</p>
-                            <div class="flex justify-end mt-4 text-xs">
+                            <div class="flex justify-end mt-4 text-xs gap-x-2">
                                 <button type="button" class="btn-secondary" x-on:click="showConfirmation = false">Cancel</button>
                                 <button type="submit" class="btn-reject">Log out</button>
                             </div>

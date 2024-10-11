@@ -22,6 +22,7 @@ class User extends Authenticatable
         'contact',
         'role',
         'password',
+        'block'
     ];
 
     /**
@@ -53,4 +54,15 @@ class User extends Authenticatable
     }
 
     public static $roles = ['Administrator', 'Staff'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (is_null($user->block)) {
+                $user->block = false;
+            }
+        });
+    }
 }

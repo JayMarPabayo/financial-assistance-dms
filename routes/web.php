@@ -3,6 +3,7 @@
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\UserController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
@@ -40,6 +41,15 @@ Route::middleware('guest')->group(function () {
         $remember = $request->filled('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+
+            $user = Auth::user();
+            if ($user->block) {
+                Auth::logout();
+                return redirect()->back()->withErrors([
+                    'credentials' => 'User is blocked'
+                ]);
+            }
+
             return redirect()->intended('/');
         } else {
             return redirect()->back()->withErrors([
@@ -48,7 +58,7 @@ Route::middleware('guest')->group(function () {
         }
     })->name('auth.login');
 
-    Route::resource('services', ServiceController::class);
+    Route::resource('services', ServiceController::class)->only(['index', 'show']);
 
     Route::post('services/{service:slug}', function (RequestRequest $request, $slug) {
         $service = Service::where('slug', $slug)->firstOrFail();
@@ -236,9 +246,24 @@ Route::middleware('auth')->group(function () {
             return view('admin.edit', ['request' => $request]);
         })->name('admin.edit');
 
-        Route::resource('schedules', ScheduleController::class);
-    });
+        Route::get('financial-services', function () {
+            $services = Service::all();
+            return view('admin.services', ['services' => $services]);
+        })->name('admin.services');
 
+        Route::get('financial-services/create', function () {
+            return view('admin.services-create');
+        })->name('admin.services.create');
+
+        Route::get('financial-services/{service:slug}', function ($slug) {
+            $service = Service::where('slug', $slug)->firstOrFail();
+            return view('admin.services-edit', ['service' => $service]);
+        })->name('admin.services.edit');
+
+        Route::resource('schedules', ScheduleController::class);
+        Route::resource('users', UserController::class);
+        Route::resource('services', ServiceController::class)->only(['store', 'update', 'destroy']);
+    });
 
 
 

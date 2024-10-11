@@ -34,8 +34,8 @@ class Service extends Model
     ];
 
     public static $serviceStatus = [
-        'available',
-        'unavailable',
+        'Available',
+        'Unavailable',
     ];
 
     protected static function boot()

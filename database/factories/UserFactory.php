@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'contact' => fake()->phoneNumber(),
             'role' => fake()->randomElement(User::$roles),
             'password' => static::$password ??= Hash::make('password'),
+            'block' => false,
             'remember_token' => Str::random(10),
         ];
     }

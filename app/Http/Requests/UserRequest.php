@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserRequest extends FormRequest
 {
@@ -21,12 +22,15 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $user = Auth::user();
+
         return [
             'name' => 'required|string|max:255',
+            'username' => "required|string|max:255|unique:users,username,$user->id",
             'contact' => 'nullable|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
             'role' => 'required|string',
-            'password' => 'required'
+            'password' => 'required|string|confirmed',
 
         ];
     }

@@ -9,7 +9,6 @@
         <form action="{{ route('profile.update') }}" method="post">
             @csrf
             @method('PUT')
-
             <div class="block mb-1">
                 <label for="name" class="mb-1">Full name</label>
                 @error('name')

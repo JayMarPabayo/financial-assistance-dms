@@ -7,6 +7,6 @@
     };
 @endphp
 
-<span class="px-3 py-1 rounded shadow-sm text-white {{ $bgColor }}">
+<span class="px-3 py-1 rounded shadow-sm text-white {{ $bgColor }} whitespace-nowrap">
     {{ ucfirst($status) }}
 </span>
