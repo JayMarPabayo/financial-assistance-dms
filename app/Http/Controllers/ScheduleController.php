@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use App\Models\Service;
+use App\Models\Request as RequestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,7 +41,12 @@ class ScheduleController extends Controller
 
         $validated['user_id'] = Auth::user()->id;
 
+        $requestModel = RequestModel::findOrFail($validated['request_id']);
+        $requestModel->update(['status' => 'Approved']);
+
         Schedule::create($validated);
+
+
 
         return redirect()->route('schedules.index')->with('success', 'New request has been approved.');
     }

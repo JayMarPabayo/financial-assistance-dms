@@ -34,7 +34,7 @@
                     <form
                     method="POST"
                     id="cancel-submit-form"
-                    action="{{ route('applications.submit.cancel') }}"
+                    action="{{ route('transactions.submit.cancel') }}"
                     x-data="{ showConfirm: false }">
                         @csrf
                         @method('PUT')

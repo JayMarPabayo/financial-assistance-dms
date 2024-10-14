@@ -7,7 +7,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -15,21 +14,20 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
 
+Route::get('home', function () {
+    return view('index');
+})->name('home');
+
 Route::middleware('guest')->group(function () {
 
     Route::get('/', function () {
         return redirect()->route('home');
     });
 
-    Route::get('home', function () {
-        return view('index');
-    })->name('home');
-
-    Route::get('login', fn() => to_route('auth.login'))->name('login');
-
     Route::get('auth/login', function () {
         return view('auth.index');
-    })->name('auth.login');
+    })->name('login');
+
 
     Route::post('auth/login', function (Request $request) {
         $request->validate([
@@ -147,8 +145,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         if (Auth::user()->role === "Staff") {
             return redirect()->route('requests.index');
-        } else {
+        } else if (Auth::user()->role === "Administrator") {
             return redirect()->route('admin.index');
+        } else {
+            return redirect()->route('home');
         }
     });
 
@@ -255,6 +255,8 @@ Route::middleware('auth')->group(function () {
             return view('admin.services-create');
         })->name('admin.services.create');
 
+        Route::put('transactions-submit-cancel', [RequestController::class, 'cancelSubmit'])->name('transactions.submit.cancel');
+
         Route::get('financial-services/{service:slug}', function ($slug) {
             $service = Service::where('slug', $slug)->firstOrFail();
             return view('admin.services-edit', ['service' => $service]);
@@ -264,8 +266,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('services', ServiceController::class)->only(['store', 'update', 'destroy']);
     });
-
-
 
     Route::get('profile', function () {
         return view('profile.index');

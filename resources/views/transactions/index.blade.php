@@ -46,7 +46,11 @@
             </thead>
             <tbody>
                 @forelse ($requests as $index => $request)
-                    <tr onclick="window.location.href = '{{ route('transactions.edit', $request->tracking_no) }}'" class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
+                    <tr
+                    @if ($request->status !== "Approved")
+                        onclick="window.location.href = '{{ route('transactions.edit', $request->tracking_no) }}'"
+                    @endif
+                    class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
                         <td class="p-3 text-sky-700">{{ strtoupper($request->tracking_no) }}</td>
                         <td class="p-3">{{ $request->name }}</td>
                         <td class="p-3">{{ $request->service->name }}</td>
