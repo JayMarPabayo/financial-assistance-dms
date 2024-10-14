@@ -110,6 +110,6 @@ Providing chairs and tables in their availability.',
 4. Letter of Intent (sulat hangyo)'
         ]);
 
-        Request::factory(1)->create();
+        // Request::factory(1)->create();
     }
 }
