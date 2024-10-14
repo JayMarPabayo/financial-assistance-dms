@@ -109,7 +109,5 @@ Providing chairs and tables in their availability.',
 3. Valid I.D
 4. Letter of Intent (sulat hangyo)'
         ]);
-
-        Request::factory(25)->create();
     }
 }
