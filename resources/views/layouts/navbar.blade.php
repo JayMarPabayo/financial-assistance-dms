@@ -24,9 +24,9 @@
                     Applications
                     <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('applications.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
-                <a href="{{ route('auth.login') }}" class="relative group">
+                <a href="{{ route('login') }}" class="relative group">
                     Sign in
-                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('auth.login')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('login')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                 </a>
             @endguest
             @auth

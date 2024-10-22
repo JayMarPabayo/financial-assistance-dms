@@ -13,7 +13,7 @@
                     <img src="{{ asset('images/banner.jpg') }}" alt="Banner" class="opacity-80 object-cover object-top w-full h-full rounded-bl-md">
                 </div>
                 <div class="px-10 py-5 grow">
-                    <form action="{{ route('auth.login') }}" method="POST">
+                    <form action="{{ route('login') }}" method="POST">
                         @csrf
                         @error('username')
                             <p class="text-xs text-red-500 font-medium">{{ $message }}</p>

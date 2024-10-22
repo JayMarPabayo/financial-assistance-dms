@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
 
-Route::get('home', function () {
+Route::get('/home', function () {
     return view('index');
 })->name('home');
 
@@ -22,12 +22,11 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/', function () {
         return redirect()->route('home');
-    });
+    })->name('home');
 
     Route::get('auth/login', function () {
         return view('auth.index');
     })->name('login');
-
 
     Route::post('auth/login', function (Request $request) {
         $request->validate([

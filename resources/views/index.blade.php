@@ -5,13 +5,13 @@
     <div class="mb-5">
         <h1>In partnership with:</h1>
     </div>
-    <section class="flex items-center justify-between mb-10">
+    <section class="flex items-center justify-between mb-5 pb-5 border-b border-sky-900/20">
         <img src="{{ asset('images/CONGRESS.png') }}" class="h-32" alt="Congress Logo">
         <img src="{{ asset('images/DOH.png') }}" class="h-32" alt="DOH Logo">
         <img src="{{ asset('images/DSWD.png') }}" class="h-32" alt="DSWD Logo">
     </section>
     <div class="mb-5 flex items-center gap-x-2">
-        <span class="text-xl text-teal-700">►</span><h1 class="font-semibold text-lg">Guide</h1>
+        <h1 class="font-semibold text-lg">Guide</h1>
     </div>
     <div class="w-full h-96 mb-10 flex justify-center relative overflow-hidden carousel">
         <button class="prev absolute left-0 z-10 bg-gray-500 text-white px-2 py-1">❮</button>
@@ -24,7 +24,6 @@
             <img src="{{ asset('steps/06.png') }}" alt="Steps 6" class="object-contain object-top h-full w-full">
             <img src="{{ asset('steps/07.png') }}" alt="Steps 7" class="object-contain object-top h-full w-full">
             <img src="{{ asset('steps/08.png') }}" alt="Steps 8" class="object-contain object-top h-full w-full">
-            <!-- Add more images here -->
         </div>
         <button class="next absolute right-0 z-10 bg-gray-500 text-white px-2 py-1">❯</button>
     </div>
