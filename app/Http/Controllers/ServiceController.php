@@ -32,7 +32,25 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validated();
 
-        Service::create($validatedData);
+        // -- Check if there are no requirements
+        if (!$request->has('requirements') || count($request->requirements) === 0) {
+            // -- Return back with an error message
+            return redirect()->back()->withInput()->withErrors([
+                'requirements' => 'Must have at least one requirement',
+            ]);
+        }
+
+
+        $service = Service::create($validatedData);
+
+        if ($request->has('requirements')) {
+            foreach ($request->requirements as $requirement) {
+                $service->requirements()->create($requirement);
+            }
+        } else {
+        }
+
+
 
         return redirect()->route('admin.services')->with('success', 'Service created successfully!');
     }
@@ -53,7 +71,21 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validated();
 
+        if (!$request->has('requirements') || count($request->requirements) === 0) {
+            return redirect()->back()->withInput()->withErrors([
+                'requirements' => 'Must have at least one requirement',
+            ]);
+        }
+
         $service->update($validatedData);
+
+        if ($request->has('requirements')) {
+            $service->requirements()->delete();
+
+            foreach ($request->requirements as $requirement) {
+                $service->requirements()->create($requirement);
+            }
+        }
 
         return redirect()->route('admin.services')->with('success', 'Service updated successfully!');
     }

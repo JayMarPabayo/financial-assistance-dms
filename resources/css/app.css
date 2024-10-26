@@ -7,12 +7,13 @@ label {
 }
 
 input:not(.search),
-textarea {
+textarea,
+select {
     @apply shadow-inner ps-2 py-2 rounded-md block mb-3 border border-sky-600 focus:outline-none focus:border-sky-400 focus:outline-sky-400 focus:outline-1 duration-300 text-sky-800;
 }
 
 button {
-    @apply shadow-sm hover:shadow-md hover:scale-105 active:scale-105 duration-300;
+    @apply shadow-sm hover:shadow-md hover:scale-105 active:scale-95 duration-300;
 }
 
 select {

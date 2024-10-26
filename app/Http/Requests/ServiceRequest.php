@@ -34,14 +34,16 @@ class ServiceRequest extends FormRequest
             ],
             'description' => 'required|string',
             'eligibility' => 'required|string',
-            'requirements' => 'required|string',
-            'numberOfRequirements' => 'required|integer|min:1',
             'slug' => [
                 'nullable',
                 'string',
                 'max:255',
                 Rule::unique('services', 'slug')->ignore($serviceId), // Same here for slug
             ],
+            'requirements' => 'sometimes|array',
+            'requirements.*.type' => 'required|string|max:255',
+            'requirements.*.name' => 'required|string|max:255',
+            'requirements.*.details' => 'nullable|string',
         ];
     }
 }

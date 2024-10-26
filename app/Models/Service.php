@@ -15,14 +15,17 @@ class Service extends Model
         'name',
         'description',
         'eligibility',
-        'requirements',
-        'numberOfRequirements',
         'status',
     ];
 
     public function requests(): HasMany
     {
         return $this->hasMany(Request::class);
+    }
+
+    public function requirements(): HasMany
+    {
+        return $this->hasMany(Requirement::class);
     }
     public static $serviceExamples = [
         'Burial Assistance',

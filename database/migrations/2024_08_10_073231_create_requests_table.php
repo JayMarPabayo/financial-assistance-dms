@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('status')->default('For review');
             $table->string('tracking_no')->unique();
             $table->text('message')->nullable();
-            $table->json('files_path')->default("[]");
             $table->timestamps();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('service_id')->constrained()->cascadeOnDelete();

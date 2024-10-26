@@ -7,7 +7,7 @@
                 <button title="Return" class="btn-secondary">
                   <x-carbon-launch title="Return" class="w-4" />
                 </button>
-              </a>
+            </a>
         </div>
         <form action="{{ route('services.store') }}" method="post">
             @csrf
@@ -23,17 +23,6 @@
                     </div>
                     <input type="text" name="name" placeholder="Input service name" value="{{ old('name') }}" class="w-full">
                 </div>
-            <div class="w-1/2">
-                <div class="w-full mb-1">
-                    <label for="numberOfRequirements" class="mb-1">No. of Requirements</label>
-                    @error('numberOfRequirements')
-                        <span class="ms-2 text-xs text-red-600 font-medium">
-                            {{ $message }}
-                        </span>
-                    @enderror
-                </div>
-                <input type="number" name="numberOfRequirements" placeholder="Input no. of requirements" value="{{ old('numberOfRequirements') }}" class="w-1/2">    
-            </div>
             </section>
             <div class="block mb-1">
                 <label for="description" class="mb-1">Description</label>
@@ -55,17 +44,103 @@
             </div>
             <textarea name="eligibility" placeholder="Criteria or qualifications required to avail of this service." rows="8" class="w-full">{{ old('eligibility') }}</textarea>
         
-            <div class="block mb-1">
-                <label for="requirements" class="mb-1">Requirements</label>
+            <div class="flex items-start gap-x-2 mb-1">
+                <h1>Requirements</h1>
+                <button type="button" id="add-requirement" title="Return" class="bg-slate-100 px-2 rounded-md text-lg text-center text-slate-700 font-medium hover:bg-slate-100/50">
+                   +
+                </button>
                 @error('requirements')
                     <span class="ms-2 text-xs text-red-600 font-medium">
                         {{ $message }}
                     </span>
                 @enderror
             </div>
-            <textarea name="requirements" placeholder="Documents or prerequisites needed to apply for this service." rows="10" class="w-full">{{ old('requirements') }}</textarea>
 
+            <section id="requirements-section" class="flex flex-col gap-y-2">
+                @foreach (old('requirements', []) as $index => $requirement)
+                    <div class="requirement-input flex items-center gap-x-2">
+                        <p>{{ $index + 1 }}.</p>
+                        <select
+                        name="requirements[{{ $index }}][type]"
+                        style="margin-bottom: 0;" >
+                            @foreach ($requirementTypes as $type)
+                                <option value="{{ $type }}" {{ old("requirements.{$index}.type") == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                        </select>
+            
+                        <input
+                            type="text"
+                            name="requirements[{{ $index }}][name]"
+                            placeholder="Name (Valid ID, Barangay Clearance, etc.)" 
+                            value="{{ old("requirements.{$index}.name", '') }}"
+                            class="search w-80 shadow-inner ps-2 py-2 rounded-md block border focus:outline-none focus:border-sky-400 focus:outline-sky-400 focus:outline-1 duration-300 text-sky-800 {{ $errors->has("requirements.{$index}.name") ? 'border-red-400' : 'border-sky-600' }}"
+                            style="margin-bottom: 0;" >
+
+                        <input
+                            type="text"
+                            name="requirements[{{ $index }}][details]"
+                            placeholder="Details (Optional)" 
+                            value="{{ old("requirements.{$index}.details", '') }}" 
+                            class="flex-1"
+                            style="margin-bottom: 0;" >
+                        
+                        <button type="button" class="remove-requirement bg-slate-100 px-2 rounded-md text-lg text-center text-slate-700 font-medium hover:bg-slate-100/50">X</button>
+                    </div>
+                @endforeach
+            </section>
             <button type="submit" class="btn-primary mt-5">Submit</button>
         </form>
     </main>
 </x-layout>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addButton = document.getElementById('add-requirement');
+    const requirementsSection = document.getElementById('requirements-section');
+    let requirementIndex = {{ count(old('requirements', [])) }}; // Get the current number of requirements
+
+    addButton.addEventListener('click', function () {
+        // Create a new div for the requirement input
+        const newRequirementDiv = document.createElement('div');
+        newRequirementDiv.className = 'requirement-input flex items-center gap-x-2';
+
+        // Create new elements for requirement type, name, and details
+        newRequirementDiv.innerHTML = `
+            <p>${requirementIndex + 1}.</p>
+
+            <select name="requirements[${requirementIndex}][type]" class="border" style="margin-bottom: 0;">
+                @foreach ($requirementTypes as $type)
+                    <option value="{{ $type }}">{{ $type }}</option>
+                @endforeach
+            </select>
+
+            <input
+            type="text"
+            name="requirements[${requirementIndex}][name]"
+            placeholder="Name (Valid ID, Barangay Clearance, etc.)"
+            class="w-80 border"
+            style="margin-bottom: 0;">
+
+            <input
+            type="text"
+            name="requirements[${requirementIndex}][details]"
+            placeholder="Details (Optional)"
+            class="flex-1 border"
+            style="margin-bottom: 0;">
+            <button type="button" class="remove-requirement bg-slate-100 px-2 rounded-md text-lg text-center text-slate-700 font-medium hover:bg-slate-100/50">X</button>
+        `;
+
+        requirementsSection.appendChild(newRequirementDiv);
+        newRequirementDiv.querySelector('.remove-requirement').addEventListener('click', function () {
+            newRequirementDiv.remove();
+        });
+        requirementIndex++;
+    });
+
+        document.querySelectorAll('.remove-requirement').forEach(button => {
+        button.addEventListener('click', function () {
+            button.parentElement.remove();
+        });
+    });
+});
+</script>
+    

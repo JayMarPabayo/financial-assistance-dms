@@ -29,8 +29,6 @@ class RequestRequest extends FormRequest
             'contact' => 'required|string',
             'email' => 'nullable|email',
             'status' => 'nullable|string',
-            'files_path' => 'nullable|array',
-            'files_path.*' => 'file|mimes:jpg,png,pdf,docx|max:10240',
         ];
     }
 }

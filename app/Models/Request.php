@@ -30,7 +30,6 @@ class Request extends Model
         'status',
         'message',
         'tracking_no',
-        'files_path',
         'service_id',
     ];
 

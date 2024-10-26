@@ -12,9 +12,11 @@
                 <h1 class="text-sky-900 text-lg font-semibold">{{ $service->name }}</h1>
                 <p class="text-slate-700 text-sm mb-3">{{ $service->description }}</p>
                 <div class="flex gap-x-2 items-center justify-end mt-auto text-sm">
-                    <button title="Edit" class="px-5 py-1 border bg-sky-50 hover:bg-sky-100 border-sky-900/60 rounded-md">
-                        <a href="{{ route('admin.services.edit', $service->slug) }}"><x-carbon-edit class="h-5 fill-sky-900" /></a>
-                    </button>
+                    <a href="{{ route('admin.services.edit', $service->slug) }}">
+                        <button title="Edit" class="px-5 py-1 border bg-sky-50 hover:bg-sky-100 border-sky-900/60 rounded-md">
+                            <x-carbon-edit class="h-5 fill-sky-900" />
+                        </button>
+                    </a>
                     <form action="{{ route('services.destroy', $service) }}" method="POST" class="relative group" x-data="{ showConfirmation: false }">
                         @csrf
                         @method('DELETE')

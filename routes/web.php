@@ -6,6 +6,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
+use App\Models\Requirement;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -63,20 +64,21 @@ Route::middleware('guest')->group(function () {
         $data['tracking_no'] = uniqid();
 
 
-        if ($request->has('files_path')) {
-            $filePaths = [];
+        // if ($request->has('files_path')) {
+        //     $filePaths = [];
 
-            foreach ($request->file('files_path') as $file) {
-                $filename =  $data['tracking_no'] . '-' . $file->getClientOriginalName();
-                $path = $file->storeAs('attachments', $filename, 'private');
-                $filePaths[] = $path;
-            }
+        //     foreach ($request->file('files_path') as $file) {
+        //         $filename =  $data['tracking_no'] . '-' . $file->getClientOriginalName();
+        //         $path = $file->storeAs('attachments', $filename, 'private');
+        //         $filePaths[] = $path;
+        //     }
 
 
-            $data['files_path'] = json_encode($filePaths);
-        } else {
-            $data['files_path'] = "[]";
-        }
+        //     $data['files_path'] = json_encode($filePaths);
+        // } else {
+        //     $data['files_path'] = "[]";
+        // }
+
 
         $data['status'] = 'For review';
 
@@ -98,40 +100,40 @@ Route::middleware('guest')->group(function () {
     Route::put('applications/{tracking}', function (RequestRequest $request) {
         $requestToUpdate = RequestModel::where('tracking_no', $request->input('tracking_no'))->firstOrFail();
 
-        $existingFilesPath = json_decode($requestToUpdate->files_path, true) ?? [];
+        // $existingFilesPath = json_decode($requestToUpdate->files_path, true) ?? [];
 
-        $finalFiles = "[]";
-        if ($request->has('files_path')) {
-            $filePaths = [];
+        // $finalFiles = "[]";
+        // if ($request->has('files_path')) {
+        //     $filePaths = [];
 
-            foreach ($request->file('files_path') as $file) {
-                $filename =  $requestToUpdate->tracking_no . '-' . $file->getClientOriginalName();
-                $path = $file->storeAs('attachments', $filename, 'private');
-                $filePaths[] = $path;
-            }
-
-
-            $finalFiles = json_encode($filePaths);
-        }
-
-        $removedFiles = explode(',', $request->input('files_to_remove'));
-        // Delete each file in the removedFiles array from the storage
-        foreach ($removedFiles as $file) {
-            if (Storage::disk('private')->exists($file)) {
-                Storage::disk('private')->delete($file);
-            }
-        }
+        //     foreach ($request->file('files_path') as $file) {
+        //         $filename =  $requestToUpdate->tracking_no . '-' . $file->getClientOriginalName();
+        //         $path = $file->storeAs('attachments', $filename, 'private');
+        //         $filePaths[] = $path;
+        //     }
 
 
-        $existingFilesPath = array_diff($existingFilesPath, $removedFiles);
+        //     $finalFiles = json_encode($filePaths);
+        // }
 
-        $mergedPaths = array_merge($existingFilesPath, json_decode($finalFiles));
+        // $removedFiles = explode(',', $request->input('files_to_remove'));
+        // // Delete each file in the removedFiles array from the storage
+        // foreach ($removedFiles as $file) {
+        //     if (Storage::disk('private')->exists($file)) {
+        //         Storage::disk('private')->delete($file);
+        //     }
+        // }
 
-        $request['files_path'] = [];
+
+        // $existingFilesPath = array_diff($existingFilesPath, $removedFiles);
+
+        // $mergedPaths = array_merge($existingFilesPath, json_decode($finalFiles));
+
+        // $request['files_path'] = [];
         $data = $request->validated();
 
         $data['status'] = 'For review';
-        $data['files_path'] = json_encode($mergedPaths);
+        // $data['files_path'] = json_encode($mergedPaths);
 
         $requestToUpdate->update($data);
         $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
@@ -251,14 +253,18 @@ Route::middleware('auth')->group(function () {
         })->name('admin.services');
 
         Route::get('financial-services/create', function () {
-            return view('admin.services-create');
+            $requirementTypes = Requirement::getRequirementTypes();
+            return view('admin.services-create', [
+                'requirementTypes' => $requirementTypes,
+            ]);
         })->name('admin.services.create');
 
         Route::put('transactions-submit-cancel', [RequestController::class, 'cancelSubmit'])->name('transactions.submit.cancel');
 
         Route::get('financial-services/{service:slug}', function ($slug) {
             $service = Service::where('slug', $slug)->firstOrFail();
-            return view('admin.services-edit', ['service' => $service]);
+            $requirementTypes = Requirement::getRequirementTypes();
+            return view('admin.services-edit', ['service' => $service, 'requirementTypes' => $requirementTypes,]);
         })->name('admin.services.edit');
 
         Route::resource('schedules', ScheduleController::class);
