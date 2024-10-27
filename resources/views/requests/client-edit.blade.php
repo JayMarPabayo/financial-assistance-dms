@@ -31,6 +31,7 @@
                 <input type="hidden" name="tracking_no" value="{{ $request->tracking_no }}">
                 <div class="block">
                     <label for="name" class="mb-1">Applicant</label>
+                    <span class="ms-2 error hidden" for="name">Applicant name is Required.</span>
                     @error('name')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -41,6 +42,7 @@
 
                 <div class="block">
                     <label for="address" class="mb-1">Address</label>
+                    <span class="ms-2 error hidden" for="address">Address is Required.</span>
                     @error('address')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -51,12 +53,14 @@
 
                 <div class="block">
                     <label for="contact" class="mb-1">Contact No.</label>
+                    <span class="ms-2 error hidden" for="contact">Contact Info is Required.</span> 
                     @error('contact')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
                         </span>
                     @enderror
                 </div>
+                
                 <input type="text" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact', $request->contact) }}" class="w-1/2">
 
                 <div class="block">
@@ -69,110 +73,151 @@
                 </div>
                 <input type="email" name="email" placeholder="Email address" value="{{ old('email', $request->email) }}" class="w-1/2">
 
-                <div class="block">
-                    <label for="files_path" class="mb-1">Add Attachments (docx, pdf, images)</label>
-                    @error('files_path.*')
-                        <span class="ms-2 text-xs text-red-600 font-medium">{{ $message }}</span>
-                    @enderror
+                <div class="block mb-1">
+                    <h1 class="mb-2">Attachments</h1>
+
+                    @php
+                        $requirementFiles = [];
+
+                        if (isset($request->attachments)) {
+                            foreach ($request->attachments as $attachment) {
+                                $reqId = $attachment->requirement_id;
+                                if (!isset($requirementFiles[$reqId])) {
+                                    $requirementFiles[$reqId] = [];
+                                }
+                                $requirementFiles[$reqId][] = $attachment->file_path;
+                            }
+                        }
+                    @endphp
+
+                    @foreach (old('attachments', $request->service->requirements) as $index => $requirement)
+                        @php
+                            // Check if $requirement is an array or an object
+                            $requirementId = is_array($requirement) ? $requirement['requirement_id'] : $requirement->id;
+                            $requirementName = is_array($requirement) ? $requirement['name'] : $requirement->name;
+                        @endphp
+
+                        <div class="requirement-upload flex flex-col mb-2 w-[40%] bg-slate-400/50 p-1">
+                            <label for="attachments[{{ $index }}][file_path]" class="file-label">
+                                {{ $requirementName }}
+                                <span class="ms-2 error hidden">Attachment Required.</span>
+                            </label>
+                            
+                            @if(isset($requirementFiles[$requirementId]) && !empty($requirementFiles[$requirementId]))
+                                <div class="mb-2">
+                                    <span class="text-gray-600">Current File: </span>
+                                    @foreach($requirementFiles[$requirementId] as $filePath)
+                                        <a href="{{ route('file.download', basename($filePath)) }}" class="text-blue-600 underline">{{ substr(basename($filePath), 14) }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <input type="file" name="attachments[{{ $index }}][file_path]" class="text-sm file-input" id="file-input-{{ $requirementId }}">
+                            <input type="hidden" name="attachments[{{ $index }}][requirement_id]" value="{{ $requirementId }}">
+                            <input type="hidden" name="attachments[{{ $index }}][name]" value="{{ $requirementName }}">
+                        </div>
+                    @endforeach
                 </div>
-                <input type="file" name="files_path[]" id="file-input" multiple="multiple" class="w-full">
-                <input type="hidden" name="files_to_remove">
-                <p id="file-names" class="mt-2 text-sky-700"></p>
-                <p class="error hidden" id="file-error">You must upload at least {{ $request->service->numberOfRequirements }} files.</p>
                 <button type="submit" class="btn-primary mt-5">Submit</button>
             </form>
         </section>
     </main>
-    <script>
-        const fileInput = document.getElementById('file-input');
-        const fileNamesDisplay = document.getElementById('file-names');
-        const filesToRemoveInput = document.querySelector('input[name="files_to_remove"]');
 
-        const fileError = document.getElementById('file-error');
-        const applicationForm = document.getElementById('application-form');
-        const numberOfRequirements = {{ $request->service->numberOfRequirements }};
-
-
-        let filesArray = [];
-
-        // Initialize the files array with existing files
-        const existingFiles = @json(json_decode($request->files_path) ?? []);
-
-        existingFiles.forEach(file => {
-            filesArray.push({
-                name: file,
-                id: `${file}-${Math.random().toString(36).substring(2, 15)}`,
-                existing: true
-            });
-        });
-
-        renderFileList();
-
-        fileInput.addEventListener('change', function(event) {
-            const newFiles = Array.from(event.target.files);
-            newFiles.forEach(file => {
-                file.id = `${file.name}-${Math.random().toString(36).substring(2, 15)}`;
-                filesArray.push(file);
-            });
-
-            fileInput.value = '';
-            renderFileList();
-
-            const dataTransfer = new DataTransfer();
-            filesArray.filter(file => !file.existing).forEach(file => dataTransfer.items.add(file));
-            fileInput.files = dataTransfer.files;
-        });
-
-        function renderFileList() {
-            fileNamesDisplay.innerHTML = '';
-
-            filesArray.forEach(file => {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'flex items-center justify-between mb-1 w-2/6';
-                fileItem.innerHTML = `
-                    <span>${file.name}</span>
-                    <button type="button" class="text-red-600 ml-2 remove-file" data-file-id="${file.id}">Remove</button>
-                `;
-
-                fileNamesDisplay.appendChild(fileItem);
-            });
-
-            document.querySelectorAll('.remove-file').forEach(button => {
-                button.addEventListener('click', function() {
-                    const fileId = this.getAttribute('data-file-id');
-                    removeFile(fileId);
-                });
-            });
-        }
-
-        function removeFile(fileId) {
-            const fileToRemove = filesArray.find(file => file.id === fileId);
-
-            // Add the file name to the hidden input if it is an existing file
-            if (fileToRemove && fileToRemove.existing) {
-                const filesToRemove = filesToRemoveInput.value ? filesToRemoveInput.value.split(',') : [];
-                filesToRemove.push(fileToRemove.name);
-                filesToRemoveInput.value = filesToRemove.join(',');
-            }
-
-            filesArray = filesArray.filter(file => file.id !== fileId);
-            renderFileList();
-
-            const dataTransfer = new DataTransfer();
-            filesArray.filter(file => !file.existing).forEach(file => dataTransfer.items.add(file));
-            fileInput.files = dataTransfer.files;
-        }
-
-        applicationForm.addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            if(filesArray.length < numberOfRequirements) {
-                fileError.classList.remove('hidden');
-            } else {
-                fileError.classList.add('hidden');
-                applicationForm.submit();
-            }
-        })
-    </script>
 </x-layout>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const form = document.getElementById('application-form');
+        const fileInputs = document.querySelectorAll('.file-input');
+        const nameInput = form.querySelector('input[name="name"]');
+        const nameError = form.querySelector('span.error[for="name"]');
+        const addressInput = form.querySelector('input[name="address"]');
+        const addressError = form.querySelector('span.error[for="address"]');
+        const contactInput = form.querySelector('input[name="contact"]');
+        const contactError = form.querySelector('span.error[for="contact"]');
+
+        form.addEventListener('submit', function (event) {
+            let isValid = true;
+
+            // Validate Name
+            if (!nameInput.value.trim()) {
+                nameError.classList.remove('hidden');
+                nameError.style.display = 'inline';
+                isValid = false;
+            } else {
+                nameError.classList.add('hidden');
+                nameError.style.display = 'none';
+            }
+
+            // Validate Address
+            if (!addressInput.value.trim()) {
+                addressError.classList.remove('hidden');
+                addressError.style.display = 'inline';
+                isValid = false;
+            } else {
+                addressError.classList.add('hidden');
+                addressError.style.display = 'none';
+            }
+
+            // Validate Contact
+            if (!contactInput.value.trim()) {
+                contactError.classList.remove('hidden');
+                contactError.style.display = 'inline';
+                isValid = false;
+            } else {
+                contactError.classList.add('hidden');
+                contactError.style.display = 'none';
+            }
+
+            // Validate File Inputs
+            fileInputs.forEach(fileInput => {
+                const container = fileInput.closest('.requirement-upload');
+                const error = container.querySelector('.error');
+
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    error.classList.remove('hidden');
+                    error.style.display = 'inline';
+                    isValid = false;
+                } else {
+                    error.classList.add('hidden');
+                    error.style.display = 'none';
+                }
+            });
+
+            // Prevent form submission if any validation fails
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+            // Update file input change handler to manage visual styles
+    fileInputs.forEach(fileInput => {
+        fileInput.addEventListener('change', function () {
+            const container = this.closest('.requirement-upload');
+            const label = container.querySelector('.file-label');
+            const error = container.querySelector('.error');
+
+            if (this.files && this.files.length > 0) {
+                container.style.backgroundColor = '#10B981';
+                container.style.color = '#ffffff';
+                if (label) {
+                    label.style.color = '#ffffff';
+                }
+                if (error) {
+                    error.classList.add('hidden');
+                    error.style.display = 'none';
+                }
+            } else {
+                container.style.backgroundColor = 'rgba(156, 163, 175, 0.5)';
+                container.style.color = '';
+                if (label) {
+                    label.style.color = '';
+                }
+            }
+        });
+    });
+
+    });
+
+</script>

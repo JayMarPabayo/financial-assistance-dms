@@ -19,6 +19,45 @@ Route::get('/home', function () {
     return view('index');
 })->name('home');
 
+Route::get('download/{filename}', function ($filename) {
+    $filePath = storage_path("app/private/attachments/{$filename}");
+
+    if (file_exists($filePath)) {
+        return response()->download($filePath);
+    } else {
+        abort(404, 'File not found.');
+    }
+})->name('file.download');
+
+Route::get('download-zip/{tracking}', function ($tracking) {
+    $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+
+    $attachments = $request->attachments ?? [];
+
+    if (empty($attachments)) {
+        abort(404, 'No files found.');
+    }
+
+    $zipFileName = "attachments-{$request->tracking_no}.zip";
+    $zipPath = storage_path("app/private/attachments/{$zipFileName}");
+
+    $zip = new ZipArchive;
+
+    if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+        foreach ($attachments as $attachment) {
+            $filePath = storage_path('app/private/attachments/' . basename($attachment->file_path));
+            if (file_exists($filePath)) {
+                $zip->addFile($filePath, basename($attachment->file_path));
+            }
+        }
+        $zip->close();
+    } else {
+        abort(500, 'Could not create ZIP file.');
+    }
+
+    return response()->download($zipPath)->deleteFileAfterSend(true);
+})->name('files.downloadZip');
+
 Route::middleware('guest')->group(function () {
 
     Route::get('/', function () {
@@ -59,35 +98,78 @@ Route::middleware('guest')->group(function () {
     Route::resource('services', ServiceController::class)->only(['index', 'show']);
 
     Route::post('services/{service:slug}', function (RequestRequest $request, $slug) {
+
         $service = Service::where('slug', $slug)->firstOrFail();
         $data = $request->validated();
+
         $data['tracking_no'] = uniqid();
-
-
-        // if ($request->has('files_path')) {
-        //     $filePaths = [];
-
-        //     foreach ($request->file('files_path') as $file) {
-        //         $filename =  $data['tracking_no'] . '-' . $file->getClientOriginalName();
-        //         $path = $file->storeAs('attachments', $filename, 'private');
-        //         $filePaths[] = $path;
-        //     }
-
-
-        //     $data['files_path'] = json_encode($filePaths);
-        // } else {
-        //     $data['files_path'] = "[]";
-        // }
-
 
         $data['status'] = 'For review';
 
         $savedRequest = $service->requests()->create($data);
 
+        if ($request->has('attachments')) {
+            foreach ($request->attachments as $attachment) {
+                $filename =  $data['tracking_no'] . '-' . $attachment['file_path']->getClientOriginalName();
+                $path = $attachment['file_path']->storeAs('attachments', $filename, 'private');
+                $savedRequest->attachments()->create([
+                    'requirement_id' => $attachment['requirement_id'],
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
         $redirectUrl = route('applications.show') . '?search=' . $savedRequest->tracking_no;
 
         return redirect($redirectUrl)->with('prompt', "Please take note of your tracking code: {tracking_code}. You'll need this code to trace the progress of your request.");
     })->name('applications.post');
+
+    Route::put('applications/{tracking}', function (Request $request) {
+        $requestToUpdate = RequestModel::where('tracking_no', $request->input('tracking_no'))->firstOrFail();
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'contact' => 'required|string',
+            'email' => 'nullable|email',
+            'status' => 'nullable|string',
+
+            'attachments' => 'sometimes|array',
+        ]);
+        $data['status'] = "For review";
+        $requestToUpdate->update($data);
+
+        if ($request->has('attachments')) {
+            foreach ($request->attachments as $attachment) {
+                // Check if a new file is uploaded for this attachment
+                if (isset($attachment['file_path']) && $attachment['file_path'] instanceof \Illuminate\Http\UploadedFile) {
+                    $existingAttachment = $requestToUpdate->attachments()
+                        ->where('requirement_id', $attachment['requirement_id'])
+                        ->first();
+
+                    // Generate the filename and store the file
+                    $filename = $requestToUpdate->tracking_no . '-' . $attachment['file_path']->getClientOriginalName();
+                    $path = $attachment['file_path']->storeAs('attachments', $filename, 'private');
+
+                    // Update or create the attachment record
+                    if ($existingAttachment) {
+                        $existingAttachment->update([
+                            'file_path' => $path,
+                        ]);
+                    } else {
+                        $requestToUpdate->attachments()->create([
+                            'requirement_id' => $attachment['requirement_id'],
+                            'file_path' => $path,
+                        ]);
+                    }
+                }
+            }
+        }
+
+
+        $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
+        return redirect($redirectUrl);
+    })->name('applications.update');
 
 
     Route::get('applications', [RequestController::class, 'show'])->name('applications.show');
@@ -96,49 +178,6 @@ Route::middleware('guest')->group(function () {
         $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
         return view('requests.client-edit', ['request' => $request]);
     })->name('applications.edit');
-
-    Route::put('applications/{tracking}', function (RequestRequest $request) {
-        $requestToUpdate = RequestModel::where('tracking_no', $request->input('tracking_no'))->firstOrFail();
-
-        // $existingFilesPath = json_decode($requestToUpdate->files_path, true) ?? [];
-
-        // $finalFiles = "[]";
-        // if ($request->has('files_path')) {
-        //     $filePaths = [];
-
-        //     foreach ($request->file('files_path') as $file) {
-        //         $filename =  $requestToUpdate->tracking_no . '-' . $file->getClientOriginalName();
-        //         $path = $file->storeAs('attachments', $filename, 'private');
-        //         $filePaths[] = $path;
-        //     }
-
-
-        //     $finalFiles = json_encode($filePaths);
-        // }
-
-        // $removedFiles = explode(',', $request->input('files_to_remove'));
-        // // Delete each file in the removedFiles array from the storage
-        // foreach ($removedFiles as $file) {
-        //     if (Storage::disk('private')->exists($file)) {
-        //         Storage::disk('private')->delete($file);
-        //     }
-        // }
-
-
-        // $existingFilesPath = array_diff($existingFilesPath, $removedFiles);
-
-        // $mergedPaths = array_merge($existingFilesPath, json_decode($finalFiles));
-
-        // $request['files_path'] = [];
-        $data = $request->validated();
-
-        $data['status'] = 'For review';
-        // $data['files_path'] = json_encode($mergedPaths);
-
-        $requestToUpdate->update($data);
-        $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
-        return redirect($redirectUrl);
-    })->name('applications.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -184,45 +223,6 @@ Route::middleware('auth')->group(function () {
         Route::put('requests-reject', [RequestController::class, 'reject'])->name('applications.reject');
 
         Route::put('requests-reject-cancel', [RequestController::class, 'cancelReject'])->name('applications.cancel.reject');
-
-        Route::get('download/{filename}', function ($filename) {
-            $filePath = storage_path("app/private/attachments/{$filename}");
-
-            if (file_exists($filePath)) {
-                return response()->download($filePath);
-            } else {
-                abort(404, 'File not found.');
-            }
-        })->name('file.download');
-
-        Route::get('download-zip/{tracking}', function ($tracking) {
-            $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
-
-            $files = json_decode($request->files_path, true);
-
-            if (empty($files)) {
-                abort(404, 'No files found.');
-            }
-
-            $zipFileName = "attachments-{$request->tracking_no}.zip";
-            $zipPath = storage_path("app/private/attachments/{$zipFileName}");
-
-            $zip = new ZipArchive;
-
-            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-                foreach ($files as $file) {
-                    $filePath = storage_path('app/private/attachments/' . basename($file));
-                    if (file_exists($filePath)) {
-                        $zip->addFile($filePath, basename($file));
-                    }
-                }
-                $zip->close();
-            } else {
-                abort(500, 'Could not create ZIP file.');
-            }
-
-            return response()->download($zipPath)->deleteFileAfterSend(true);
-        })->name('files.downloadZip');
     });
 
     // For Admin

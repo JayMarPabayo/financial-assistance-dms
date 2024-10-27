@@ -95,50 +95,25 @@
             <span class="text-sm font-medium text-slate-600">Attachments:</span>
         </section>
         @php
-            $files = json_decode($request->files_path, true)
+            $attachments = $request->attachments ?? [];
         @endphp
         <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex items-center gap-x-3">
-            @forelse ($files as $file)
+            @forelse ($attachments as $attachment)
                 @php
-                    $filename = basename($file);
-                    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+                    $filename = basename($attachment->file_path);
                 @endphp
-
                 <a
                 href="{{ route('file.download', $filename) }}"
                 title="{{ $filename }}"
-                class="
-                    @if($extension === 'pdf') pdf-style @endif
-                    @if($extension === 'docx') word-style @endif
-                    @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'PNG', 'JPG', 'JPEG'])) image-style @endif
-                ">
-                    @switch($extension)
-                        @case('pdf')
-                            <x-carbon-document-pdf title="{{ $filename }}" class="w-6"/>
-                            @break
-                        @case('docx')
-                            <x-carbon-document-word-processor title="{{ $filename }}" class="w-6"/>
-                            @break
-                        @case('jpg')
-                        @case('JPG')
-                        @case('jpeg')
-                        @case('JPEG')
-                        @case('png')
-                        @case('PNG')
-                        @case('gif')
-                            <x-carbon-image-reference title="{{ $filename }}" class="w-6"/>
-                            @break
-                        @default
-                        <x-carbon-document-pdf title="{{ $filename }}" class="w-6"/>
-                    @endswitch
-                    <span class="text-xs font-medium">
+                class="flex items-center gap-x-2">
+                    <button class="text-xs font-medium py-1 px-2 rounded-md bg-slate-400/50">
                         {{ substr($filename, 14) }}
-                    </span>
+                    </button>
                 </a>
             @empty
                 <span>No files attached</span>
             @endforelse
-            @if ($files)
+            @if ($attachments)
                 <button class="ms-auto self-start flex items-center gap-x-2 px-3 py-1 rounded-md bg-sky-950 text-white">
                     <svg xmlns="http://www.w3.org/2000/svg"
                     width="1em"

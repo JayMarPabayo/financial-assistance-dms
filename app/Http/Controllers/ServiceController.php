@@ -45,12 +45,10 @@ class ServiceController extends Controller
 
         if ($request->has('requirements')) {
             foreach ($request->requirements as $requirement) {
+
                 $service->requirements()->create($requirement);
             }
-        } else {
         }
-
-
 
         return redirect()->route('admin.services')->with('success', 'Service created successfully!');
     }
