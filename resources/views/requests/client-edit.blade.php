@@ -140,7 +140,6 @@
         form.addEventListener('submit', function (event) {
             let isValid = true;
 
-            // Validate Name
             if (!nameInput.value.trim()) {
                 nameError.classList.remove('hidden');
                 nameError.style.display = 'inline';
@@ -150,7 +149,6 @@
                 nameError.style.display = 'none';
             }
 
-            // Validate Address
             if (!addressInput.value.trim()) {
                 addressError.classList.remove('hidden');
                 addressError.style.display = 'inline';
@@ -160,7 +158,6 @@
                 addressError.style.display = 'none';
             }
 
-            // Validate Contact
             if (!contactInput.value.trim()) {
                 contactError.classList.remove('hidden');
                 contactError.style.display = 'inline';
@@ -170,7 +167,6 @@
                 contactError.style.display = 'none';
             }
 
-            // Validate File Inputs
             fileInputs.forEach(fileInput => {
                 const container = fileInput.closest('.requirement-upload');
                 const error = container.querySelector('.error');
@@ -185,13 +181,11 @@
                 }
             });
 
-            // Prevent form submission if any validation fails
             if (!isValid) {
                 event.preventDefault();
             }
         });
 
-            // Update file input change handler to manage visual styles
     fileInputs.forEach(fileInput => {
         fileInput.addEventListener('change', function () {
             const container = this.closest('.requirement-upload');

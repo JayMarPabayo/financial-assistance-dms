@@ -9,7 +9,7 @@
         <p class="mb-7">{!! nl2br(e($service->eligibility)) !!}</p>
 
         <h1 class="text-sky-700 font-medium text-xl mb-1">Requirements</h1>
-        <div class="flex flex-col mb-7">
+        @if($service->requirements && $service->requirements->isNotEmpty())
             @foreach ($service->requirements as $index => $requirement)
                 <div class="flex items-center gap-x-2">
                     <div>{{ ++$index }}.</div>
@@ -17,7 +17,9 @@
                     <div class="text-sm italic font-normal text-slate-800/70">{{ $requirement->details ? "($requirement->details)" : '' }}</div>
                 </div>
             @endforeach
-        </div>
+        @else
+        <div>No requirements available.</div>
+    @endif
         
         <div class="border-t-2 border-white mt-20">
             <form action="{{ route('applications.post', $service) }}"
