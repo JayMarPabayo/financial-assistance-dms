@@ -7,6 +7,13 @@ use App\Models\Request as RequestModel;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 
+use Infobip\Api\SmsApi;
+use Infobip\Configuration;
+use Infobip\ApiException;
+use Infobip\Model\SmsAdvancedTextualRequest;
+use Infobip\Model\SmsDestination;
+use Infobip\Model\SmsTextualMessage;
+
 class RequestController extends Controller
 {
     /**
@@ -82,6 +89,32 @@ class RequestController extends Controller
         $trackedRequest->status = 'Rejected';
         $trackedRequest->user_id = Auth::id();
         $trackedRequest->save();
+
+
+        $configuration = new Configuration(
+            host: '515lmy.api.infobip.com',
+            apiKey: 'b717976118ea6c14c74e0681ecdccab3-dc4305ec-22fa-4820-8cfb-6c1cdf80b402'
+        );
+
+        $sendSmsApi = new SmsApi(config: $configuration);
+
+        $message = new SmsTextualMessage(
+            destinations: [
+                new SmsDestination(to: '639152796976')
+            ],
+            from: 'Tagoloan FDMS',
+            text: 'This is a dummy SMS message sent using infobip-api-php-client'
+        );
+
+        $request = new SmsAdvancedTextualRequest(messages: [$message]);
+
+        try {
+            $smsResponse = $sendSmsApi->sendSmsMessage($request);
+        } catch (ApiException $apiException) {
+            return redirect()->with('success', $apiException->getMessage());
+        }
+
+
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
     }
 
