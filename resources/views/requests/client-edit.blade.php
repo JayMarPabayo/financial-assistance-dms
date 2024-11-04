@@ -32,13 +32,28 @@
                 <div class="block">
                     <label for="name" class="mb-1">Applicant</label>
                     <span class="ms-2 error hidden" for="name">Applicant name is Required.</span>
-                    @error('name')
+                    @error('firstname')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                    @error('middlename')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                    @error('lastname')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
                         </span>
                     @enderror
                 </div>
-                <input type="text" name="name" placeholder="Input full name" value="{{ old('name', $request->name) }}" class="w-1/2">
+                {{-- <input type="text" name="name" placeholder="Input full name" value="{{ old('name', $request->name) }}" class="w-1/2"> --}}
+                <div class="flex justify-stretch gap-x-3 w-3/4">
+                    <input type="text" autocomplete="off" name="firstname" placeholder="First Name" value="{{ old('firstname', $request->firstname) }}" class="w-1/3">
+                    <input type="text" autocomplete="off" name="middlename" placeholder="Middle Name" value="{{ old('middlename', $request->middlename) }}" class="w-1/3">
+                    <input type="text" autocomplete="off" name="lastname" placeholder="Last Name" value="{{ old('lastname', $request->lastname) }}" class="w-1/3">
+                </div>
 
                 <div class="block">
                     <label for="address" class="mb-1">Address</label>
@@ -49,7 +64,7 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" name="address" placeholder="Input full address" value="{{ old('address', $request->address) }}" class="w-3/4">
+                <input type="text" autocomplete="off" name="address" placeholder="Input full address" value="{{ old('address', $request->address) }}" class="w-3/4">
 
                 <div class="block">
                     <label for="contact" class="mb-1">Contact No.</label>
@@ -61,7 +76,7 @@
                     @enderror
                 </div>
                 
-                <input type="text" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact', $request->contact) }}" class="w-1/2">
+                <input type="text" autocomplete="off" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact', $request->contact) }}" class="w-1/2">
 
                 <div class="block">
                     <label for="email" class="mb-1">Email</label>

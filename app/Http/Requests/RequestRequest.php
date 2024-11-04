@@ -24,7 +24,9 @@ class RequestRequest extends FormRequest
     {
 
         return [
-            'name' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
+            'middlename' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
             'address' => 'required|string',
             'contact' => 'required|string',
             'email' => 'nullable|email',

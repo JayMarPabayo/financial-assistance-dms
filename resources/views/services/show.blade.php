@@ -1,6 +1,18 @@
 <x-layout>
-    <header class="text-center h-24 py-3 bg-sky-900 text-white text-4xl font-medium tracking-wide flex items-center justify-center">
+    <header class="relative text-center h-24 py-3 bg-sky-900 text-white text-4xl font-medium tracking-wide flex items-center justify-center">
+        @if($previousService)
+            <a href="{{ route('services.show', $previousService) }}" class="absolute left-5">
+                <x-carbon-triangle-left-solid class="h-5 fill-sky-200 cursor-pointer hover:scale-125 hover:fill-white active:scale-100 duration-300" />
+            </a>
+        @endif
+
         <h1>{{ $service->name }}</h1>
+
+        @if($nextService)
+            <a href="{{ route('services.show', $nextService) }}" class="absolute right-5">
+                <x-carbon-triangle-right-solid class="h-5 fill-sky-200 cursor-pointer hover:scale-125 hover:fill-white active:scale-100 duration-300" />
+            </a>
+        @endif
     </header>
     <main class="pt-10 text-lg text-slate-900">
         <p class="mb-7">{{ $service->description }}</p>
@@ -19,7 +31,7 @@
             @endforeach
         @else
         <div>No requirements available.</div>
-    @endif
+        @endif
         
         <div class="border-t-2 border-white mt-20">
             <form action="{{ route('applications.post', $service) }}"
@@ -36,13 +48,27 @@
                 <div class="block mb-1">
                     <label for="name" class="mb-1">Applicant</label>
                     <span class="ms-2 error hidden" for="name">Applicant name is Required.</span>
-                    @error('name')
+                    @error('firstname')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                    @error('middlename')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                    @error('lastname')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
                         </span>
                     @enderror
                 </div>
-                <input type="text" name="name" placeholder="Input full name" value="{{ old('name') }}" class="w-1/2">
+                <div class="flex justify-stretch gap-x-3 w-3/4">
+                    <input type="text" autocomplete="off" name="firstname" placeholder="First Name" value="{{ old('firstname') }}" class="w-1/3">
+                    <input type="text" autocomplete="off" name="middlename" placeholder="Middle Name" value="{{ old('middlename') }}" class="w-1/3">
+                    <input type="text" autocomplete="off" name="lastname" placeholder="Last Name" value="{{ old('lastname') }}" class="w-1/3">
+                </div>
 
                 <div class="block mb-1">
                     <label for="address" class="mb-1">Address</label>
@@ -53,7 +79,7 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" name="address" placeholder="Input full address" value="{{ old('address') }}" class="w-3/4">
+                <input type="text" autocomplete="off" name="address" placeholder="Input full address" value="{{ old('address') }}" class="w-3/4">
 
                 <div class="block mb-1">
                     <label for="contact" class="mb-1">Contact No.</label>
@@ -64,7 +90,7 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact') }}" class="w-1/2">
+                <input type="text" autocomplete="off" name="contact" placeholder="Telephone/Cellphone No." value="{{ old('contact') }}" class="w-1/2">
 
                 <div class="block mb-1">
                     <label for="email" class="mb-1">Email</label>

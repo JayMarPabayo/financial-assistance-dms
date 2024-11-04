@@ -30,7 +30,7 @@
                     <tbody>
                         <tr class="border border-slate-500/50 cursor-pointer hover:bg-white/90 duration-300">
                             <td class="py-2 px-3">{{ strtoupper($request->tracking_no) }}</td>
-                            <td class="py-2 px-3">{{ $request->name }}</td>
+                            <td class="py-2 px-3">{{ $request->fullName()}}</td>
                             <td class="py-2 px-3">{{ $request->service->name }}</td>
                             <td class="py-2 px-3">{{ $request->created_at->format('d/m/Y') }}</td>
                             <td class="py-2 px-3 text-center">

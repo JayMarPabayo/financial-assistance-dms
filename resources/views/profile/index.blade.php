@@ -17,7 +17,7 @@
                     </span>
                 @enderror
             </div>
-            <input type="text" name="name" placeholder="Input full name" value="{{ old('name', auth()->user()->name) }}" class="w-1/2">
+            <input type="text" autocomplete="off" name="name" placeholder="Input full name" value="{{ old('name', auth()->user()->name) }}" class="w-1/2">
 
             <div class="block mb-1">
                 <label for="username" class="mb-1">Username</label>
@@ -27,7 +27,7 @@
                     </span>
                 @enderror
             </div>
-            <input type="text" name="username" placeholder="Username" value="{{ old('username', auth()->user()->username) }}" class="w-1/2">
+            <input type="text" autocomplete="off" name="username" placeholder="Username" value="{{ old('username', auth()->user()->username) }}" class="w-1/2">
         
             <button type="submit" class="btn-primary">Update</button>
         </form>

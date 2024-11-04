@@ -7,13 +7,6 @@ use App\Models\Request as RequestModel;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 
-use Infobip\Api\SmsApi;
-use Infobip\Configuration;
-use Infobip\ApiException;
-use Infobip\Model\SmsAdvancedTextualRequest;
-use Infobip\Model\SmsDestination;
-use Infobip\Model\SmsTextualMessage;
-
 class RequestController extends Controller
 {
     /**
@@ -29,7 +22,7 @@ class RequestController extends Controller
 
         $requests = RequestModel::where('user_id', null)->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
             ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
-            ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+            ->orderBy($sort ?? 'id', $sort == 'lastname' ? 'asc' : 'desc')
             ->paginate(15);
         return view('requests.index', ['requests' => $requests, 'services' => Service::all()]);
     }
@@ -88,32 +81,30 @@ class RequestController extends Controller
         $trackedRequest->message = $request->input('message');
         $trackedRequest->status = 'Rejected';
         $trackedRequest->user_id = Auth::id();
+
+        $ch = curl_init();
+        $parameters = array(
+            'apikey' => '8b9effaea9ac4fdd71f0ddccfa7afba4', //Your API KEY
+            'number' => '639152796976',
+            'message' => 'I just sent my first message with Semaphore',
+            'sendername' => 'SEMAPHORE'
+        );
+        curl_setopt($ch, CURLOPT_URL, 'https://semaphore.co/api/v4/messages');
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        curl_setopt($ch, CURLOPT_URL, 'https://semaphore.co/api/v4/messages');
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        //Send the parameters set above with the request
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
+
+        // Receive response from server
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);
+        curl_close($ch);
+
+        dd($output);
         $trackedRequest->save();
-
-
-        $configuration = new Configuration(
-            host: '515lmy.api.infobip.com',
-            apiKey: 'b717976118ea6c14c74e0681ecdccab3-dc4305ec-22fa-4820-8cfb-6c1cdf80b402'
-        );
-
-        $sendSmsApi = new SmsApi(config: $configuration);
-
-        $message = new SmsTextualMessage(
-            destinations: [
-                new SmsDestination(to: '639152796976')
-            ],
-            from: 'Tagoloan FDMS',
-            text: 'This is a dummy SMS message sent using infobip-api-php-client'
-        );
-
-        $request = new SmsAdvancedTextualRequest(messages: [$message]);
-
-        try {
-            $smsResponse = $sendSmsApi->sendSmsMessage($request);
-        } catch (ApiException $apiException) {
-            return redirect()->with('success', $apiException->getMessage());
-        }
-
 
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
     }
@@ -130,7 +121,7 @@ class RequestController extends Controller
     public function submit(Request $request)
     {
         $trackedRequest = RequestModel::where('tracking_no', $request->input('tracking'))->firstOrFail();
-        $trackedRequest->status = 'For approval';
+        $trackedRequest->status = 'For schedule';
         $trackedRequest->message = '';
         $trackedRequest->user_id = Auth::id();
         $trackedRequest->save();

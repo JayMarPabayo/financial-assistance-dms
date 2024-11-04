@@ -14,7 +14,7 @@
                     </span>
                 @enderror
             </div>
-            <input type="text" name="name" placeholder="Input full name" value="{{ old('name') }}" class="w-1/2">
+            <input type="text" autocomplete="off" name="name" placeholder="Input full name" value="{{ old('name') }}" class="w-1/2">
 
             <div class="block mb-1">
                 <label for="contact" class="mb-1">Contact</label>
@@ -34,7 +34,7 @@
                     </span>
                 @enderror
             </div>
-            <input type="text" name="username" placeholder="Username" value="{{ old('username') }}" class="w-1/2">
+            <input type="text" autocomplete="off" name="username" placeholder="Username" value="{{ old('username') }}" class="w-1/2">
         
             <div class="block mb-1">
                 <label for="password" class="mb-1">Password</label>

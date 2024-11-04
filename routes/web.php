@@ -7,13 +7,16 @@ use App\Http\Controllers\UserController;
 use App\Http\Requests\RequestRequest;
 use App\Models\Request as RequestModel;
 use App\Models\Requirement;
+use App\Models\Schedule;
 use App\Models\Service;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 Route::get('/home', function () {
     return view('index');
@@ -128,7 +131,9 @@ Route::middleware('guest')->group(function () {
         $requestToUpdate = RequestModel::where('tracking_no', $request->input('tracking_no'))->firstOrFail();
 
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
+            'middlename' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
             'address' => 'required|string',
             'contact' => 'required|string',
             'email' => 'nullable|email',
@@ -201,14 +206,22 @@ Route::middleware('auth')->group(function () {
             $searchKey = $request->input('search');
             $service = $request->input('filter');
             $sort = $request->input('sort');
+            $state = $request->input('state');
 
             $serviceId = Service::where('name', $service)->first()?->id;
 
-            $requests = RequestModel::where('user_id', Auth::id())->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+            $requests = RequestModel::where('user_id', Auth::id())
+                ->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
                 ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
-                ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+                ->when($state, fn($query, $state) => $query->where('status', $state))
+                ->orderBy($sort ?? 'id', 'asc')
                 ->paginate(15);
-            return view('transactions.index', ['requests' => $requests, 'services' => Service::all()]);
+
+            return view('transactions.index', [
+                'requests' => $requests,
+                'services' => Service::all(),
+                'status' => RequestModel::$requestStatus
+            ]);
         })->name('transactions.index');
 
         Route::get('transactions/{tracking}/edit', function (String $tracking) {
@@ -235,9 +248,9 @@ Route::middleware('auth')->group(function () {
 
             $serviceId = Service::where('name', $service)->first()?->id;
 
-            $requests = RequestModel::where('status', "For Approval")->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+            $requests = RequestModel::where('status', "For schedule")->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
                 ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
-                ->orderBy($sort ?? 'id', $sort == 'name' ? 'asc' : 'desc')
+                ->orderBy($sort ?? 'id', $sort == 'lastname' ? 'asc' : 'desc')
                 ->paginate(15);
             return view('admin.index', ['requests' => $requests, 'services' => Service::all()]);
         })->name('admin.index');
@@ -246,6 +259,13 @@ Route::middleware('auth')->group(function () {
             $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
             return view('admin.edit', ['request' => $request]);
         })->name('admin.edit');
+
+        Route::get('schedules/export', function () {
+            $schedules = Schedule::where('user_id', Auth::id())
+                ->orderBy('date', 'asc')->get();
+
+            return view('admin/report', ['schedules' => $schedules]);
+        })->name('schedules.export');
 
         Route::get('financial-services', function () {
             $services = Service::all();

@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
+
 
 class Request extends Model
 {
@@ -29,7 +33,9 @@ class Request extends Model
     }
 
     protected $fillable = [
-        'name',
+        'firstname',
+        'middlename',
+        'lastname',
         'address',
         'contact',
         'email',
@@ -37,6 +43,12 @@ class Request extends Model
         'message',
         'tracking_no',
         'service_id',
+    ];
+
+    public static $requestStatus = [
+        'For schedule',
+        'Rejected',
+        'Approved',
     ];
 
     protected static function boot()
@@ -58,10 +70,18 @@ class Request extends Model
     public function scopeSearch(Builder $query, string $keyword): Builder
     {
         return $query->where(function ($query) use ($keyword) {
-            $query->where('name', 'like', '%' . $keyword . '%')
+            $query->where('firstname', 'like', '%' . $keyword . '%')
+                ->orWhere('middlename', 'like', '%' . $keyword . '%')
+                ->orWhere('lastname', 'like', '%' . $keyword . '%')
                 ->orWhere('address', 'like', '%' . $keyword . '%')
                 ->orWhere('contact', 'like', '%' . $keyword . '%')
                 ->orWhere('email', 'like', '%' . $keyword . '%');
         });
+    }
+
+    public function fullName(): string
+    {
+        $middleInitial = $this->middlename ? strtoupper(substr($this->middlename, 0, 1)) . '.' : '';
+        return trim(Str::title("{$this->lastname} {$this->firstname}, {$middleInitial}"));
     }
 }

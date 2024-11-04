@@ -12,16 +12,21 @@
                 >
             </label>
             <section class="flex items-center gap-x-3">
-                <select name="filter" value="{{ request('filter') }}">
-                    <option value="" hidden selected>Filter by</option>
-                    <option value="">All Services</option>
+                <select name="filter" value="{{ request('filter') }}" style="margin-bottom: 0">
+                    <option value="" >All Services</option>
                    @foreach ($services as $service)
-                   <option value="{{ strtolower($service->name) }}" @selected( request('filter') === $service->name )>{{ $service->name }}</option>
+                    <option value="{{ strtolower($service->name) }}" @selected( request('filter') === strtolower($service->name) )>{{ $service->name }}</option>
                    @endforeach
                 </select>
-                <select name="sort">
+                <select name="state" value="{{ request('state') }}" style="margin-bottom: 0">
+                    <option value="" >All Status</option>
+                   @foreach ($status as $state)
+                    <option value="{{ strtolower($state) }}" @selected( request('state') === strtolower($state) )>{{ $state }}</option>
+                   @endforeach
+                </select>
+                <select name="sort" style="margin-bottom: 0">
                     <option value="" disabled hidden selected>Sort by</option>
-                    <option value="name" @selected( request('sort') === 'name' )>Name</option>
+                    <option value="lastname" @selected( request('sort') === 'lastname' )>Name</option>
                     <option value="created_at" @selected( request('sort') === 'created_at' )>Submission</option>
                 </select>
                 <button type="submit" class="btn-secondary">
@@ -52,7 +57,7 @@
                     @endif
                     class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
                         <td class="p-3 text-sky-700">{{ strtoupper($request->tracking_no) }}</td>
-                        <td class="p-3">{{ $request->name }}</td>
+                        <td class="p-3">{{ $request->fullName()}}</td>
                         <td class="p-3">{{ $request->service->name }}</td>
                         <td class="p-3">{{ $request->email ?? 'N/A' }}</td>
                         <td class="p-3">{{ $request->contact ?? 'N/A' }}</td>

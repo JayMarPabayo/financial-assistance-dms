@@ -16,7 +16,7 @@
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="tracking" value="{{ $request->tracking_no }}">
-                        <button type="button" @click.prevent="showConfirm = true" class="btn-primary">Submit for Approval</button>
+                        <button type="button" @click.prevent="showConfirm = true" class="btn-primary">Submit for Schedule</button>
             
                         <div x-cloak x-show="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                             <div class="bg-white rounded-lg p-5 min-w-96 text-start">
@@ -30,7 +30,7 @@
                         </div>
                     </form>
                 @endif
-                @if ($request->status === "For approval")
+                @if ($request->status === "For schedule")
                     <form
                     method="POST"
                     id="cancel-submit-form"
@@ -65,7 +65,7 @@
             <div class="grid grid-cols-2 gap-y-3">
                 <div class="flex items-center gap-x-3">
                     <x-carbon-user-avatar-filled-alt class="w-5 fill-slate-500" />
-                    <div class="col-span-4">{{ $request->name ?? '' }}</div>
+                    <div class="col-span-4">{{ $request->fullName()?? '' }}</div>
                 </div>
                 <div class="flex items-center gap-x-3">
                     <x-carbon-web-services-container class="w-5 fill-slate-500" />
@@ -127,7 +127,7 @@
         </section>
 
         <hr class="mb-5 border-sky-800 border-t-2" />
-        @if ($request->status !== "For approval")
+        @if ($request->status !== "For schedule")
             <section class="flex items-center gap-x-2 mb-5">
                 <x-carbon-mail-reply class="w-6 fill-sky-800"/>
                 <span class="text-sm font-medium text-slate-600">Reject:</span>

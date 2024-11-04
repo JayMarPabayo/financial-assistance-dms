@@ -13,9 +13,24 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = Schedule::where('user_id', Auth::id())->paginate(15);
+        $searchKey = $request->input('search');
+        $service = $request->input('filter');
+        $sort = $request->input('sort') ?? 'id';
+
+        $serviceId = Service::where('name', $service)->first()?->id;
+
+        $schedules = Schedule::where('user_id', Auth::id())
+            ->when($searchKey, fn($query) => $query->search($searchKey))
+            ->when(
+                $serviceId,
+                fn($query) =>
+                $query->whereHas('request', fn($q) => $q->where('service_id', $serviceId))
+            )
+            ->orderBy($sort, 'asc')
+            ->paginate(15);
+
         return view('admin.schedules', ['schedules' => $schedules, 'services' => Service::all()]);
     }
 

@@ -58,7 +58,14 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        return view('services.show', ['service' => $service]);
+        $previousService = Service::where('id', '<', $service->id)->orderBy('id', 'desc')->first();
+        $nextService = Service::where('id', '>', $service->id)->orderBy('id')->first();
+
+        return view('services.show', [
+            'service' => $service,
+            'previousService' => $previousService,
+            'nextService' => $nextService,
+        ]);
     }
 
 

@@ -22,7 +22,7 @@
                             </span>
                         @enderror
                     </div>
-                    <input type="text" name="name" placeholder="Input service name" value="{{ old('name', $service->name) }}" class="w-full">
+                    <input type="text" autocomplete="off" name="name" placeholder="Input service name" value="{{ old('name', $service->name) }}" class="w-full">
                 </div>
             </section>
             <div class="block mb-1">

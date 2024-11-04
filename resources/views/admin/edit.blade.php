@@ -20,7 +20,7 @@
             <div class="grid grid-cols-2 gap-y-3">
                 <div class="flex items-center gap-x-3">
                     <x-carbon-user-avatar-filled-alt class="w-5 fill-slate-500" />
-                    <div class="col-span-4">{{ $request->name ?? '' }}</div>
+                    <div class="col-span-4">{{ $request->fullName() ?? '' }}</div>
                 </div>
                 <div class="flex items-center gap-x-3">
                     <x-carbon-web-services-container class="w-5 fill-slate-500" />

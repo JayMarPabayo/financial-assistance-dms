@@ -21,7 +21,9 @@ class RequestFactory extends Factory
 
 
         return [
-            'name' => fake()->name(),
+            'firstname' => fake()->firstName(),
+            'middlename' => fake()->lastName(),
+            'lastname' => fake()->lastName(),
             'address' => fake()->address(),
             'contact' => fake()->phoneNumber(),
             'email' => fake()->safeEmail(),
