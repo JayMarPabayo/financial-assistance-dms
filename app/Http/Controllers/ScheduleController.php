@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApprovedMail;
 use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Request as RequestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ScheduleController extends Controller
 {
@@ -59,7 +61,10 @@ class ScheduleController extends Controller
         $requestModel = RequestModel::findOrFail($validated['request_id']);
         $requestModel->update(['status' => 'Approved']);
 
-        Schedule::create($validated);
+        $schedule = Schedule::create($validated);
+
+        Mail::to('jaymarpabayo@gmail.com')->send(new ApprovedMail($requestModel->tracking_no, $requestModel->service->name,  $schedule));
+
 
 
 

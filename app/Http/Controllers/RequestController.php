@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RejectMail;
 use Illuminate\Http\Request;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class RequestController extends Controller
 {
@@ -82,28 +84,9 @@ class RequestController extends Controller
         $trackedRequest->status = 'Rejected';
         $trackedRequest->user_id = Auth::id();
 
-        $ch = curl_init();
-        $parameters = array(
-            'apikey' => '8b9effaea9ac4fdd71f0ddccfa7afba4', //Your API KEY
-            'number' => '639152796976',
-            'message' => 'I just sent my first message with Semaphore',
-            'sendername' => 'SEMAPHORE'
-        );
-        curl_setopt($ch, CURLOPT_URL, 'https://semaphore.co/api/v4/messages');
-        curl_setopt($ch, CURLOPT_POST, 1);
+        Mail::to($trackedRequest->email)->send(new RejectMail($trackedRequest->tracking_no, $trackedRequest->service->name));
 
-        curl_setopt($ch, CURLOPT_URL, 'https://semaphore.co/api/v4/messages');
-        curl_setopt($ch, CURLOPT_POST, 1);
 
-        //Send the parameters set above with the request
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
-
-        // Receive response from server
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        dd($output);
         $trackedRequest->save();
 
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
