@@ -63,7 +63,7 @@ class ScheduleController extends Controller
 
         $schedule = Schedule::create($validated);
 
-        Mail::to('jaymarpabayo@gmail.com')->send(new ApprovedMail($requestModel->tracking_no, $requestModel->service->name,  $schedule));
+        Mail::to($requestModel->email)->send(new ApprovedMail($requestModel->tracking_no, $requestModel->service->name,  $schedule));
 
 
 
