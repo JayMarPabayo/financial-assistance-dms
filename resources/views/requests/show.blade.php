@@ -24,6 +24,9 @@
                             <th class="text-start text-white py-2 px-3">Applicant</th>
                             <th class="text-start text-white py-2 px-3">Service</th>
                             <th class="text-start text-white py-2 px-3">Submitted at</th>
+                            @if ($request->status === "Approved")
+                                <th class="text-start text-white py-2 px-3">Approved at</th>
+                            @endif
                             <th class="text-center text-white py-2 px-3">Status</th>
                         </tr>
                     </thead>
@@ -33,6 +36,9 @@
                             <td class="py-2 px-3">{{ $request->fullName()}}</td>
                             <td class="py-2 px-3">{{ $request->service->name }}</td>
                             <td class="py-2 px-3">{{ $request->created_at->format('d/m/Y') }}</td>
+                            @if ($request->status === "Approved")
+                            <td class="py-2 px-3">{{ $request->updated_at->format('d/m/Y') }}</td>
+                            @endif
                             <td class="py-2 px-3 text-center">
                                 <x-status-badge :status="$request->status" />
                             </td>
