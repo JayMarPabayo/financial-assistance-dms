@@ -52,7 +52,7 @@ class ScheduleController extends Controller
         $validated = $request->validate([
             'request_id' => 'required',
             'date' => 'required|date',
-            'time' => 'required',
+            'time' => 'required|string',
             'notes' => 'nullable|string',
         ]);
 
@@ -63,10 +63,7 @@ class ScheduleController extends Controller
 
         $schedule = Schedule::create($validated);
 
-        Mail::to($requestModel->email)->send(new ApprovedMail($requestModel->tracking_no, $requestModel->service->name,  $schedule));
-
-
-
+        Mail::to($requestModel->email)->send(new ApprovedMail($requestModel->tracking_no,  $schedule));
 
         return redirect()->route('schedules.index')->with('success', 'New request has been approved.');
     }

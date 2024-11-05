@@ -43,6 +43,8 @@ class Requirement extends Model
             'Educational Document',
             'Utility/Address Verification',
             'Medical Record',
+            'Burial Requirements',
+            'Other Requirements',
         ];
     }
 }

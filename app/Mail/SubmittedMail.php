@@ -9,16 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApprovedMail extends Mailable
+class SubmittedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $trackingNumber;
-    public $schedule;
-    public function __construct($trackingNumber, $schedule)
+    public function __construct($trackingNumber)
     {
         $this->trackingNumber = $trackingNumber;
-        $this->schedule = $schedule;
     }
 
     /**
@@ -27,7 +25,7 @@ class ApprovedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Request Approved',
+            subject: 'Application Submitted',
         );
     }
 
@@ -37,7 +35,7 @@ class ApprovedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.approved-mail',
+            view: 'emails.submitted-mail',
         );
     }
 

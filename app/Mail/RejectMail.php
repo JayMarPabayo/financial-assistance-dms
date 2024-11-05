@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,11 +13,11 @@ class RejectMail extends Mailable
     use Queueable, SerializesModels;
 
     public $trackingNumber;
-    public $requestType;
-    public function __construct($trackingNumber, $requestType)
+    public $reason;
+    public function __construct($trackingNumber, $message)
     {
         $this->trackingNumber = $trackingNumber;
-        $this->requestType = $requestType;
+        $this->reason = $message;
     }
 
     /**

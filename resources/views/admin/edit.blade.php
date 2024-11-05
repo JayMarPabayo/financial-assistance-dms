@@ -122,8 +122,12 @@
                                 </span>
                             @enderror
                         </div>
-                        <input type="time" name="time" value="{{ old('time') }}" class="w-96 pe-2">
+                        <select name="time" value="{{ old('time') }}" class="w-96 pe-2">
+                            <option value="8:00 AM - 12:00 PM" @selected( old('time') === "8:00 AM - 12:00 PM")>8:00 AM - 12:00 PM</option>
+                            <option value="1:00 PM - 5:00 PM" @selected( old('time') === "1:00 PM - 5:00 PM")>1:00 PM - 5:00 PM</option>
+                        </select>
                     </section>
+                    
                     <section class="flex-grow">
                         <div class="block mb-1 mt-2">
                             <label for="notes" class="mb-1">Notes</label>
@@ -133,7 +137,7 @@
                                 </span>
                             @enderror
                         </div>
-                        <textarea name="notes" id="notes" class="w-full" rows="5"></textarea>
+                        <textarea name="notes" id="notes" class="w-full" rows="5" placeholder="Optional"></textarea>
                     </section>
                 </div>
 

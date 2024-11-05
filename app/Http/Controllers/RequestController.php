@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\RejectMail;
+use App\Mail\ScheduleMail;
 use Illuminate\Http\Request;
 use App\Models\Request as RequestModel;
 use App\Models\Service;
@@ -83,8 +84,7 @@ class RequestController extends Controller
         $trackedRequest->message = $request->input('message');
         $trackedRequest->status = 'Rejected';
         $trackedRequest->user_id = Auth::id();
-
-        Mail::to($trackedRequest->email)->send(new RejectMail($trackedRequest->tracking_no, $trackedRequest->service->name));
+        Mail::to($trackedRequest->email)->send(new RejectMail($trackedRequest->tracking_no,  $trackedRequest->message));
 
 
         $trackedRequest->save();
@@ -107,6 +107,10 @@ class RequestController extends Controller
         $trackedRequest->status = 'For schedule';
         $trackedRequest->message = '';
         $trackedRequest->user_id = Auth::id();
+
+        Mail::to($trackedRequest->email)->send(new ScheduleMail($trackedRequest->tracking_no));
+
+
         $trackedRequest->save();
         return redirect()->route('requests.edit', $trackedRequest->tracking_no);
     }

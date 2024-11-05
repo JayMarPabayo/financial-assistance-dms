@@ -5,12 +5,14 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\RequestRequest;
+use App\Mail\SubmittedMail;
 use App\Models\Request as RequestModel;
 use App\Models\Requirement;
 use App\Models\Schedule;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
@@ -121,6 +123,8 @@ Route::middleware('guest')->group(function () {
                 ]);
             }
         }
+
+        Mail::to($savedRequest->email)->send(new SubmittedMail($savedRequest->tracking_no));
 
         $redirectUrl = route('applications.show') . '?search=' . $savedRequest->tracking_no;
 

@@ -82,6 +82,6 @@ class Request extends Model
     public function fullName(): string
     {
         $middleInitial = $this->middlename ? strtoupper(substr($this->middlename, 0, 1)) . '.' : '';
-        return trim(Str::title("{$this->lastname} {$this->firstname}, {$middleInitial}"));
+        return trim(Str::title("{$this->lastname}, {$this->firstname} {$middleInitial}"));
     }
 }
