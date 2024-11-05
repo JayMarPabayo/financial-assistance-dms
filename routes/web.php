@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
-
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Password;
 
 
 Route::get('/home', function () {
@@ -187,6 +186,27 @@ Route::middleware('guest')->group(function () {
         $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
         return view('requests.client-edit', ['request' => $request]);
     })->name('applications.edit');
+
+    // -- FORGOT PASSWORD -- 
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', function (Request $request) {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    })->name('password.email');
+
+    Route::get('/reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->middleware('guest')->name('password.reset');
 });
 
 Route::middleware('auth')->group(function () {

@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory()->create(['name' => 'John S. Doe', 'username' => 'staff', 'role' => 'Staff']);
-        User::factory()->create(['name' => 'Jai Pastrana', 'username' => 'admin', 'role' => 'Administrator']);
+        User::factory()->create(['name' => 'John S. Doe', 'username' => 'staff', 'email' => 'jaymarpabayo@gmail.com', 'role' => 'Staff']);
+        User::factory()->create(['name' => 'Jai Pastrana', 'username' => 'admin', 'email' => 'jaymarpabayo@gmail.com', 'role' => 'Administrator']);
 
         Service::factory()->create([
             'name' => 'Burial Assistance',

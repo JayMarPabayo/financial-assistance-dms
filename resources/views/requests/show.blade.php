@@ -37,7 +37,7 @@
                             <td class="py-2 px-3">{{ $request->service->name }}</td>
                             <td class="py-2 px-3">{{ $request->created_at->format('d/m/Y') }}</td>
                             @if ($request->status === "Approved")
-                            <td class="py-2 px-3">{{ $request->schedule->created_at->format('d/m/Y') }}</td>
+                                <td class="py-2 px-3">{{ $request->schedule->created_at->format('d/m/Y') }}</td>
                             @endif
                             <td class="py-2 px-3 text-center">
                                 <x-status-badge :status="$request->status" />
