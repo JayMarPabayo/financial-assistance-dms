@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,11 @@ class Request extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function schedule(): HasOne
+    {
+        return $this->hasOne(Schedule::class);
     }
 
     public function attachments(): HasMany
