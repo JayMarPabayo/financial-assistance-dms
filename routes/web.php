@@ -36,34 +36,34 @@ Route::get('download/{filename}', function ($filename) {
     }
 })->name('file.download');
 
-Route::get('download-zip/{tracking}', function ($tracking) {
-    $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
+// Route::get('download-zip/{tracking}', function ($tracking) {
+//     $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
 
-    $attachments = $request->attachments ?? [];
+//     $attachments = $request->attachments ?? [];
 
-    if (empty($attachments)) {
-        abort(404, 'No files found.');
-    }
+//     if (empty($attachments)) {
+//         abort(404, 'No files found.');
+//     }
 
-    $zipFileName = "attachments-{$request->tracking_no}.zip";
-    $zipPath = storage_path("app/private/attachments/{$zipFileName}");
+//     $zipFileName = "attachments-{$request->tracking_no}.zip";
+//     $zipPath = storage_path("app/private/attachments/{$zipFileName}");
 
-    $zip = new ZipArchive;
+//     $zip = new ZipArchive;
 
-    if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-        foreach ($attachments as $attachment) {
-            $filePath = storage_path('app/private/attachments/' . basename($attachment->file_path));
-            if (file_exists($filePath)) {
-                $zip->addFile($filePath, basename($attachment->file_path));
-            }
-        }
-        $zip->close();
-    } else {
-        abort(500, 'Could not create ZIP file.');
-    }
+//     if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+//         foreach ($attachments as $attachment) {
+//             $filePath = storage_path('app/private/attachments/' . basename($attachment->file_path));
+//             if (file_exists($filePath)) {
+//                 $zip->addFile($filePath, basename($attachment->file_path));
+//             }
+//         }
+//         $zip->close();
+//     } else {
+//         abort(500, 'Could not create ZIP file.');
+//     }
 
-    return response()->download($zipPath)->deleteFileAfterSend(true);
-})->name('files.downloadZip');
+//     return response()->download($zipPath)->deleteFileAfterSend(true);
+// })->name('files.downloadZip');
 
 Route::middleware('guest')->group(function () {
 
@@ -353,12 +353,14 @@ Route::middleware('auth')->group(function () {
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
             'username' => "required|string|max:255|unique:users,username,$user->id", // Ensure the username is unique except for the current user
         ]);
 
         /** @disregard [OPTIONAL CODE] [OPTIONAL DESCRIPTION] */
         $user->update([
             'name' => $request->name,
+            'email' => $request->email,
             'username' => $request->username,
         ]);
 

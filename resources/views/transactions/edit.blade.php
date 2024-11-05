@@ -113,7 +113,7 @@
             @empty
                 <span>No files attached</span>
             @endforelse
-            @if ($attachments)
+            {{-- @if ($attachments)
                 <button class="ms-auto self-start flex items-center gap-x-2 px-3 py-1 rounded-md bg-sky-950 text-white">
                     <svg xmlns="http://www.w3.org/2000/svg"
                     width="1em"
@@ -123,7 +123,7 @@
                     </svg>
                     <a href="{{ route('files.downloadZip', $request->tracking_no) }}">Downlod as zip</a>
                 </button>
-            @endif
+            @endif --}}
         </section>
 
         <hr class="mb-5 border-sky-800 border-t-2" />
