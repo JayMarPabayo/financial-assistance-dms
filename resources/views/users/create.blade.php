@@ -37,6 +37,16 @@
             <input type="text" autocomplete="off" name="username" placeholder="Username" value="{{ old('username') }}" class="w-1/2">
         
             <div class="block mb-1">
+                <label for="email" class="mb-1">Email</label>
+                @error('email')
+                    <span class="ms-2 text-xs text-red-600 font-medium">
+                        {{ $message }}
+                    </span>
+                @enderror
+            </div>
+            <input type="email" autocomplete="off" name="email" placeholder="Email" value="{{ old('email') }}" class="w-1/2">
+        
+            <div class="block mb-1">
                 <label for="password" class="mb-1">Password</label>
                 @error('password')
                     <span class="ms-2 text-xs text-red-600 font-medium">

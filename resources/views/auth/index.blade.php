@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="mx-auto w-3/4">
+    <div class="mx-auto w-3/4 mb-2">
         <p class="text-justify text-sky-950">
             This platform designed to streamline the application process for various types of assistance, including Burial Assistance, Medical Billing Assistance, and more. It enables the submission of required documents online, with updates provided via SMS. Authorized staff members utilize this system to review and verify applications securely, ensuring that all documents meet the necessary requirements. 
         </p>
@@ -34,9 +34,11 @@
                         @error ('credentials')
                             <p class="text-xs text-red-500 font-medium mb-2">{{ $message }}</p>
                         @enderror
-                        <div class="flex items-center gap-x-2 w-fit mb-5 px-2 py-1">
+                        <div class="flex items-center justify-start gap-x-2 w-full mb-5 px-2 py-1">
                             <input type="checkbox" name="remember" class="cursor-pointer" style="margin: 0;">
                             <label for="remember" class="text-sm">Remember me?</label>
+
+                            <a href="{{ route('password.request') }}" class="ms-auto text-sm text-sky-700 hover:underline">Forgot Password?</a>
                         </div>
             
                         <button type="submit" class="btn-primary w-full text-lg">
@@ -46,5 +48,10 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="mx-auto w-3/4">
+        @if (session('status'))
+            <div class="success">{{ session('status') }}. Login to proceed.</div>
+        @endif
     </div>
 </x-layout> 

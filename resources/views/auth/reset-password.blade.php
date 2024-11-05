@@ -3,7 +3,7 @@
         <h1 class="text-sky-900 text-lg">Reset your Password</h1>
         <hr class="border-t border-sky-700/70" style="margin-block: 1rem">
 
-        <form action="#" method="post">
+        <form action="{{ route('password.update') }}" method="post">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
 
@@ -35,7 +35,7 @@
 
 
             {{-- Submit Button --}}
-            <button type="button" class="btn-primary">Reset Password</button>
+            <button type="submit" class="btn-primary">Reset Password</button>
         </form>
     </div>
 </x-layout>

@@ -1,10 +1,13 @@
 <x-layout>
     <div class="w-1/2 rounded-md bg-white shadow-md p-5 mx-auto">
-        <h1 class="text-sky-900 text-lg">Reset Password</h1>
+        <div class="flex items-center justify-between">
+            <h1 class="text-sky-900 text-lg">Reset Password</h1>
+            @if (session('status'))
+                <div class="success">{{ session('status') }}</div>
+            @endif
+        </div>
         <hr class="border-t border-sky-700/70" style="margin-block: 1rem">
-        @if (session('status'))
-            <div class="error">{{ session('status') }}</div>
-        @endif
+       
     
         <form action="{{ route('password.email') }}" method="post">
             @csrf

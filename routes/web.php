@@ -10,6 +10,7 @@ use App\Models\Request as RequestModel;
 use App\Models\Requirement;
 use App\Models\Schedule;
 use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request as AuthRequest;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 
 Route::get('/home', function () {
@@ -206,7 +209,32 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/reset-password/{token}', function (string $token) {
         return view('auth.reset-password', ['token' => $token]);
-    })->middleware('guest')->name('password.reset');
+    })->name('password.reset');
+
+    Route::post('/reset-password', function (Request $request) {
+        $credentials = $request->validate([
+            'token' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed'],
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
+    })->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
