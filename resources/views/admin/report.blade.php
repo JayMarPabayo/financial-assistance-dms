@@ -49,7 +49,6 @@
                     @forelse ($schedules as $index => $schedule)
                         @php
                             $formatDate = new DateTime($schedule->date);
-                            $formatTime = new DateTime($schedule->time);
                         @endphp
                         <tr class="bg-white/40 border border-slate-500/50 cursor-pointer hover:bg-white/70 duration-300">
                             <td class="p-3 text-sky-700">{{ strtoupper($schedule->request->tracking_no) }}</td>
@@ -57,7 +56,7 @@
                             <td class="p-3">{{ $schedule->request->service->name }}</td>
                             <td class="p-3">{{ $schedule->created_at->format('d/m/Y') }}</td>
                             <td class="p-3">{{ $formatDate->format('d/m/Y') }}</td>
-                            <td class="p-3">{{ $formatTime->format('h:m A') }}</td>
+                            <td class="p-3">{{ $schedule->time }}</td>
                         </tr>
                     @empty
                         <tr>
