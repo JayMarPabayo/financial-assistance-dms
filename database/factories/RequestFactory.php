@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Request;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,6 +25,10 @@ class RequestFactory extends Factory
             'firstname' => fake()->firstName(),
             'middlename' => fake()->lastName(),
             'lastname' => fake()->lastName(),
+            'name_extension' => fake()->randomElement(array_merge([''], Request::$nameExtensions)),
+            'deceased_person' => '',
+            'birthdate' => fake()->date('Y-m-d', '-18 years'),
+            'gender' => fake()->randomElement(['Male', 'Female', 'Other']),
             'address' => fake()->address(),
             'contact' => fake()->phoneNumber(),
             'email' => fake()->safeEmail(),

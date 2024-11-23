@@ -4,8 +4,18 @@
     <p>Good day! This is fromCongressional Office (Balay Nenotchka/Payag). Your application with the tracking number <strong>{{ $trackingNumber }}</strong> has been approved.</p>
 
     <p style="font-size: 14px; color: #666;">
-        Your schedule is on <strong>{{ $schedule->date }}</strong> at <strong>{{ $schedule->time }}</strong>. Please bring all the original documents. Thank You and Mabuhay!
+        Your schedule is on <strong>{{ $schedule->date }}</strong> at <strong>{{ $schedule->time }}</strong>. Please bring all the original documents:
+        <h3 class="mt-1">Requirements</h3>
+        @if($service->requirements && $service->requirements->isNotEmpty())
+            @foreach ($service->requirements as $index => $requirement)
+                <p>{{ ++$index }}. {{ $requirement->name }}</p>
+            @endforeach
+        @else
+        <div>No requirements specified</div>
+        @endif
     </p>
+
+    <p style="font-size: 14px; color: #666;">Thank You & Mabuhay!</p>
 
     @if(!empty($schedule->notes))
         <p style="font-size: 14px; color: #666;">

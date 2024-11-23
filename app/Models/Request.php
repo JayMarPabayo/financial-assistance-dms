@@ -42,6 +42,10 @@ class Request extends Model
         'firstname',
         'middlename',
         'lastname',
+        'name_extension',
+        'deceased_person',
+        'gender',
+        'birthdate',
         'address',
         'contact',
         'email',
@@ -55,6 +59,15 @@ class Request extends Model
         'For schedule',
         'Rejected',
         'Approved',
+    ];
+
+    public static $nameExtensions = [
+        'Jr.',
+        'Sr.',
+        'III',
+        'IV',
+        'V',
+        'VI',
     ];
 
     protected static function boot()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ServiceRequest;
+use App\Models\Request as ModelsRequest;
 use App\Models\Service;
 use Illuminate\Http\Request;
 
@@ -65,6 +66,7 @@ class ServiceController extends Controller
             'service' => $service,
             'previousService' => $previousService,
             'nextService' => $nextService,
+            'nameExtensions' => ModelsRequest::$nameExtensions
         ]);
     }
 
@@ -92,7 +94,7 @@ class ServiceController extends Controller
             }
         }
 
-        return redirect()->route('admin.services')->with('success', 'Service updated successfully!');
+        return redirect()->back()->with('success', 'Service updated successfully!');
     }
 
     /**

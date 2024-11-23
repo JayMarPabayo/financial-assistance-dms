@@ -27,7 +27,7 @@
                             x-on:click.prevent="showConfirmation = true">
                                 <x-carbon-trash-can class="h-5 fill-sky-900" />
                         </button>
-                        <div x-cloak x-show="showConfirmation" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                        <div x-cloak x-show="showConfirmation" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                             <div class="bg-white p-4 rounded-lg shadow">
                                 <p class="text-left font-medium text-teal-800 mb-2">Are you sure you want to remove this service?</p>
                                 <p class="text-left text-xs mb-5">Deleting this service will also remove all the requests associated with this service.</p>

@@ -57,28 +57,30 @@
                 @php
                     $filename = basename($attachment->file_path);
                 @endphp
-                <a
-                href="{{ route('file.download', $filename) }}"
-                title="{{ $filename }}"
-                class="flex items-center gap-x-2">
-                    <button class="text-xs font-medium py-1 px-2 rounded-md bg-slate-400/50">
-                        {{ substr($filename, 14) }}
+                <div class="flex items-center gap-x-2 text-xs font-medium py-1 px-2 rounded-md bg-slate-400/50 relative"  x-data="{ showMenu: false }">
+                    <p>{{ substr($filename, 14) }}</p>
+                    <button @click="showMenu = !showMenu" class="relative">
+                        <x-carbon-overflow-menu-horizontal class="w-5"/>
                     </button>
-                </a>
+                    <div 
+                    x-show="showMenu" 
+                    @click.away="showMenu = false" 
+                    class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left"
+                    x-cloak
+                >
+                        <a @click.away="showMenu = false" href="{{ route('file.download', ['filename' => $filename]) }}" 
+                        class="block px-4 py-2 hover:bg-slate-100">
+                            Download
+                        </a>
+                        <a @click.away="showMenu = false" target="_blank" href="{{ route('file.view', ['filename' => $filename]) }}" 
+                        class="block px-4 py-2 hover:bg-slate-100">
+                            View
+                        </a>
+                    </div>
+                </div>
             @empty
                 <span>No files attached</span>
             @endforelse
-            {{-- @if ($attachments)
-                <button class="ms-auto self-start flex items-center gap-x-2 px-3 py-1 rounded-md bg-sky-950 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M21 5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7.414l2 2H16v2h2V5zm-3 8h-2v2h-2v3h4zm-2-2h-2v2h2zm2-2h-2v2h2zm-2-2h-2v2h2z"/>
-                    </svg>
-                    <a href="{{ route('files.downloadZip', $request->tracking_no) }}">Downlod as zip</a>
-                </button>
-            @endif --}}
         </section>
 
         <section class="rounded-md p-3 bg-emerald-700/80 text-sm mb-5 text-white">
@@ -112,7 +114,7 @@
                                 </span>
                             @enderror
                         </div>
-                        <input type="date" name="date" value="{{ old('date') }}" class="w-96 pe-2">
+                        <input type="date" name="date" value="{{ old('date') }}" class="w-96 pe-2"  min="{{ now()->toDateString() }}">
     
                         <div class="block mb-1 mt-2">
                             <label for="time" class="mb-1">Schedule Time</label>
@@ -144,7 +146,7 @@
                 
                 <section class="flex items-center justify-end text-sm" x-data="{ showConfirm: false }">
                     <button type="button" @click.prevent="showConfirm = true" class="btn-primary">Approve Request</button>
-                    <div x-cloak x-show="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div x-cloak x-show="showConfirm" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                         <div class="bg-white rounded-lg p-5 min-w-96 text-start">
                             <p class="text-lg text-sky-800 font-medium mb-4">Confirm Approval</p>
                             <hr class="border-t-2 mb-4">

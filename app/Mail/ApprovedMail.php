@@ -15,10 +15,12 @@ class ApprovedMail extends Mailable
 
     public $trackingNumber;
     public $schedule;
-    public function __construct($trackingNumber, $schedule)
+    public $service;
+    public function __construct($trackingNumber, $schedule, $service)
     {
         $this->trackingNumber = $trackingNumber;
         $this->schedule = $schedule;
+        $this->service = $service;
     }
 
     /**

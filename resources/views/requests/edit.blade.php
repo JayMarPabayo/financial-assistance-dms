@@ -7,29 +7,6 @@
                 <h1 class="text-lg tracking-wider">{{ strtoupper($request->tracking_no) }}</h1>
             </section>
             <section class="flex items-center gap-x-2">
-                @if ($request->status === "For review")
-                    <form
-                    method="POST"
-                    id="submit-form"
-                    action="{{ route('applications.submit') }}"
-                    x-data="{ showConfirm: false }">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="tracking" value="{{ $request->tracking_no }}">
-                        <button type="button" @click.prevent="showConfirm = true" class="btn-primary">Submit for Schedule</button>
-            
-                        <div x-cloak x-show="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div class="bg-white rounded-lg p-5 min-w-96 text-start">
-                                <p class="text-lg text-sky-800 font-medium mb-4">Confirm Submission</p>
-                                <hr class="border-t-2 mb-4">
-                                <div class="flex justify-end gap-x-4 text-sm">
-                                    <button @click.prevent="showConfirm = false" class="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
-                                    <button @click.prevent="document.getElementById('submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Submit</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                @endif
                 @if ($request->status === "For schedule")
                     <form
                     method="POST"
@@ -41,19 +18,19 @@
                         <input type="hidden" name="tracking" value="{{ $request->tracking_no }}">
                         <button type="button" @click.prevent="showConfirm = true" class="btn-secondary">Cancel Submission</button>
             
-                        <div x-cloak x-show="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div x-cloak x-show="showConfirm" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                             <div class="bg-white rounded-lg p-5 min-w-96 text-start">
                                 <p class="text-lg text-sky-800 font-medium mb-4">Confirm Cancellation of Submission</p>
                                 <hr class="border-t-2 mb-4">
                                 <div class="flex justify-end gap-x-4">
                                     <button @click.prevent="showConfirm = false" class="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
-                                    <button @click.prevent="document.getElementById('cancel-submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Submit</button>
+                                    <button @click.prevent="document.getElementById('cancel-submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Confirm</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 @endif
-                <a href="{{ url()->previous() }}">
+                <a href="{{ route('requests.index') }}">
                   <button title="Return" class="btn-secondary">
                     <x-carbon-launch title="Return" class="w-4" />
                   </button>
@@ -102,29 +79,42 @@
                 @php
                     $filename = basename($attachment->file_path);
                 @endphp
-                <a
-                href="{{ route('file.download', $filename) }}"
-                title="{{ $filename }}"
-                class="flex items-center gap-x-2">
-                    <button class="text-xs font-medium py-1 px-2 rounded-md bg-slate-400/50">
-                        {{ substr($filename, 14) }}
+                <div class="flex items-center gap-x-2 text-xs font-medium py-1 px-2 rounded-md relative"
+                    x-data="{ showMenu: false, isChecked: false }"
+                    data-status="{{ $request->status }}"
+                    :class="isChecked ? 'bg-green-400' : 'bg-slate-400/50'">
+                    <input 
+                        type="checkbox" 
+                        class="cursor-pointer attachment-checkbox"
+                        x-show="$el.closest('div').dataset.status === 'For review'"  
+                        style="margin-bottom: 0"
+                        @change="isChecked = $event.target.checked">
+                    <p>{{ substr($filename, 14) }}</p>
+                    <button @click="showMenu = !showMenu" class="z-0">
+                        <x-carbon-overflow-menu-horizontal class="w-5"/>
                     </button>
-                </a>
+                    <div
+                        x-show="showMenu" 
+                        x-cloak
+                        @click.away="showMenu = false"
+                        class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left"
+                        style="display: none;"
+                        x-transition>
+                        <a href="{{ route('file.download', ['filename' => $filename]) }}" 
+                        class="block px-4 py-2 hover:bg-slate-100">
+                            Download
+                        </a>
+                        <a target="_blank" href="{{ route('file.view', ['filename' => $filename]) }}" 
+                        class="block px-4 py-2 hover:bg-slate-100">
+                            View
+                        </a>
+                    </div>
+                </div>
             @empty
                 <span>No files attached</span>
             @endforelse
-            {{-- @if ($attachments)
-                <button class="ms-auto self-start flex items-center gap-x-2 px-3 py-1 rounded-md bg-sky-950 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M21 5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7.414l2 2H16v2h2V5zm-3 8h-2v2h-2v3h4zm-2-2h-2v2h2zm2-2h-2v2h2zm-2-2h-2v2h2z"/>
-                    </svg>
-                    <a href="{{ route('files.downloadZip', $request->tracking_no) }}">Downlod as zip</a>
-                </button>
-            @endif --}}
         </section>
+
 
         <hr class="mb-5 border-sky-800 border-t-2" />
         @if ($request->status !== "For schedule")
@@ -132,9 +122,12 @@
                 <x-carbon-mail-reply class="w-6 fill-sky-800"/>
                 <span class="text-sm font-medium text-slate-600">Reject:</span>
             </section>
-            <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex items-center gap-x-3" x-data="{ showConfirm: false }">
+            <section class="relative file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex items-center gap-x-3" x-data="{ showConfirm: false }">
                 @if ($request->status === 'For review')
-                    <form method="POST" id="reject-form" action="{{ route('applications.reject') }}" class="w-full flex flex-col">
+                    <form
+                    method="POST"
+                    id="reject-form"
+                    action="{{ route('applications.reject') }}" class="flex flex-col w-full">
                         @csrf
                         @method('PUT')
                         <textarea name="message" class="p-2 w-full"></textarea>
@@ -143,7 +136,7 @@
                         @enderror
                         <input type="hidden" name="tracking" value="{{ $request->tracking_no }}">
                         @if ($request->status === "For review")
-                            <button @click.prevent="showConfirm = true" class="bg-rose-500 w-40 rounded-md truncate text-white py-1 self-end">
+                            <button @click.prevent="showConfirm = true" class="bg-rose-500 w-40 rounded-md truncate text-white py-1 self-end me-44">
                                 Reject
                             </button>
                         @else
@@ -152,6 +145,30 @@
                             </button>
                         @endif
                     </form>
+
+                    <form
+                    method="POST"
+                    id="submit-form"
+                    action="{{ route('applications.submit') }}"
+                    x-data="{ showConfirm: false }">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="tracking" value="{{ $request->tracking_no }}">
+                        <button id="submit-button" type="button" @click.prevent="showConfirm = true" class="absolute bg-sky-800 w-40 rounded-md truncate text-white py-1 self-end -ms-44 mt-5">Submit for Schedule</button>
+            
+                        <div x-cloak x-show="showConfirm" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                            <div class="bg-white rounded-lg p-5 min-w-96 text-start">
+                                <p class="text-lg text-sky-800 font-medium mb-4">Confirm Submission</p>
+                                <hr class="border-t-2 mb-4">
+                                <div class="flex justify-end gap-x-4">
+                                <button @click.prevent="showConfirm = false" class="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
+                                <button @click.prevent="document.getElementById('submit-form').submit();" class="bg-sky-800 text-white px-4 py-2 rounded-md">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                
+
                 @else
                     <form method="POST" id="cancel-reject-form" action="{{ route('applications.cancel.reject') }}" class="w-full flex flex-col">
                         @csrf
@@ -172,10 +189,8 @@
                         @endif
                     </form>
                 @endif
-            
- 
         
-                <div x-cloak x-show="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div x-cloak x-show="showConfirm" class="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white rounded-lg p-5 min-w-96 text-start">
                         @if ($request->status === 'For review')
                             <p class="text-lg text-sky-800 font-medium mb-4">Confirm Rejection</p>
@@ -200,5 +215,28 @@
 
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.attachment-checkbox');
+            const submitButton = document.getElementById('submit-button');
+    
+            const updateSubmitButtonState = () => {
+                const allChecked = Array.from(checkboxes)?.every(checkbox => checkbox?.checked);
+                if (submitButton) {
+                    submitButton.disabled = !allChecked;
+                }
+
+                submitButton?.classList.toggle('opacity-50', !allChecked);
+                submitButton?.classList.toggle('cursor-not-allowed', !allChecked);
+            };
+    
+            checkboxes?.forEach(checkbox => {
+                checkbox?.addEventListener('change', updateSubmitButtonState);
+            });
+    
+            updateSubmitButtonState();
+        });
+    </script>
+    
 </x-layout>
 

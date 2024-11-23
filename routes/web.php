@@ -36,6 +36,16 @@ Route::get('download/{filename}', function ($filename) {
     }
 })->name('file.download');
 
+Route::get('/file/view/{filename}', function ($filename) {
+    $filePath = storage_path("app/private/attachments/{$filename}");
+
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    } else {
+        abort(404, 'File not found.');
+    }
+})->name('file.view');
+
 // Route::get('download-zip/{tracking}', function ($tracking) {
 //     $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
 
@@ -108,7 +118,6 @@ Route::middleware('guest')->group(function () {
 
         $service = Service::where('slug', $slug)->firstOrFail();
         $data = $request->validated();
-
         $data['tracking_no'] = uniqid();
 
         $data['status'] = 'For review';
@@ -128,7 +137,7 @@ Route::middleware('guest')->group(function () {
 
         Mail::to($savedRequest->email)->send(new SubmittedMail($savedRequest->tracking_no));
 
-        $redirectUrl = route('applications.show') . '?search=' . $savedRequest->tracking_no;
+        $redirectUrl = route('applications.show', ['mode' => 'tracking', 'search' => $savedRequest->tracking_no]);
 
         return redirect($redirectUrl)->with('prompt', "Please take note of your tracking code: {tracking_code}. You'll need this code to trace the progress of your request.");
     })->name('applications.post');
@@ -187,7 +196,8 @@ Route::middleware('guest')->group(function () {
 
     Route::get('applications/{tracking}', function (string $tracking) {
         $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
-        return view('requests.client-edit', ['request' => $request]);
+        $nameExtensions = RequestModel::$nameExtensions;
+        return view('requests.client-edit', ['request' => $request, 'nameExtensions' => $nameExtensions]);
     })->name('applications.edit');
 
     // -- FORGOT PASSWORD -- 

@@ -23,7 +23,12 @@ class RequestController extends Controller
 
         $serviceId = Service::where('name', $service)->first()?->id;
 
-        $requests = RequestModel::where('user_id', null)->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
+        $requests = RequestModel::where(function ($query) {
+            $query->whereNull('user_id')
+                ->orWhere('user_id', 0)
+                ->orWhere('user_id', '');
+        })
+            ->when($searchKey, fn($query, $searchKey) => $query->search($searchKey))
             ->when($serviceId, fn($query, $serviceId) => $query->where('service_id', $serviceId))
             ->orderBy($sort ?? 'id', $sort == 'lastname' ? 'asc' : 'desc')
             ->paginate(15);
@@ -51,11 +56,38 @@ class RequestController extends Controller
      */
     public function show(Request $request)
     {
-        // $tracking = '66b71cc58a072';
         $search = $request->input('search');
-        $request = RequestModel::where('tracking_no', $search)->first();
-        return view('requests.show', ['request' => $request]);
+
+        $firstname = $request->input('firstname');
+        $lastname = $request->input('lastname');
+        $middleinitial = $request->input('middleinitial');
+
+        switch ($request->input('mode')) {
+            case 'applicant':
+                $query = RequestModel::where('firstname', $firstname)
+                    ->where('lastname', $lastname)->whereRaw('LEFT(middlename, 1) = ?', [$middleinitial]);
+
+                $requestData = $query->first();
+
+                return view('requests.show', [
+                    'request' => $requestData,
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
+                    'middleinitial' => $middleinitial
+                ]);
+
+            case 'tracking':
+                $requestData = RequestModel::where('tracking_no', $search)->first();
+                return view('requests.show', [
+                    'request' => $requestData,
+                    'search' => $search,
+                ]);
+
+            default:
+                return view('requests.show');
+        }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -112,7 +144,7 @@ class RequestController extends Controller
 
 
         $trackedRequest->save();
-        return redirect()->route('requests.edit', $trackedRequest->tracking_no);
+        return redirect()->route('requests.edit', $trackedRequest->tracking_no)->with('success', 'Request Submitted for Schedule.');
     }
 
     public function cancelSubmit(Request $request)

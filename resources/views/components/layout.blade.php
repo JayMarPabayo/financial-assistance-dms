@@ -14,6 +14,44 @@
     class="bg-cover bg-no-repeat bg-center bg-opacity-80 min-h-screen flex flex-col justify-between"
     data-bg-image="{{ asset('images/bg.jpg') }}">
         @include('layouts.navbar')
+
+        <div x-data="{ flash: true }">
+            @if (session()->has('success'))
+                <div x-show="flash" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                        <x-carbon-close @click="flash = false" class="w-7 absolute right-3 top-3 cursor-pointer hover:scale-105 active:scale-95" />
+                    </span>
+                </div>
+            @endif
+
+            @if (session()->has('error'))
+                <div x-show="flash" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                        <x-carbon-close @click="flash = false" class="w-7 absolute right-3 top-3 cursor-pointer hover:scale-105 active:scale-95" />
+                    </span>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div x-show="flash" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                        <x-carbon-close @click="flash = false" class="w-7 absolute right-3 top-3 cursor-pointer hover:scale-105 active:scale-95" />
+                    </span>
+                </div>
+            @endif
+            
+        </div>
+        
         <main class="grow py-10 px-40 bg-white/50">
             {{ $slot }} 
         </main>

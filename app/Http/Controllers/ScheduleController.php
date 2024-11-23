@@ -62,10 +62,11 @@ class ScheduleController extends Controller
         $requestModel->update(['status' => 'Approved']);
 
         $schedule = Schedule::create($validated);
+        $service = $requestModel->service;
 
-        Mail::to($requestModel->email)->send(new ApprovedMail($requestModel->tracking_no,  $schedule));
+        Mail::to($requestModel->email)->send(new ApprovedMail($requestModel->tracking_no,  $schedule, $service));
 
-        return redirect()->route('schedules.index')->with('success', 'New request has been approved.');
+        return redirect()->route('schedules.index')->with('success', 'Request has been approved and scheduled.');
     }
 
     /**

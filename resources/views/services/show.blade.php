@@ -24,13 +24,13 @@
         @if($service->requirements && $service->requirements->isNotEmpty())
             @foreach ($service->requirements as $index => $requirement)
                 <div class="flex items-center gap-x-2">
-                    <div>{{ ++$index }}.</div>
+                    <div>{{ ++$index }}</div>
                     <div>{{ $requirement->name }}</div>
                     <div class="text-sm italic font-normal text-slate-800/70">{{ $requirement->details ? "($requirement->details)" : '' }}</div>
                 </div>
             @endforeach
         @else
-        <div>No requirements available.</div>
+        <div>No requirements specified</div>
         @endif
         
         <div class="border-t-2 border-white mt-20">
@@ -47,7 +47,9 @@
                 <input type="hidden" name="service_id" value="{{ $service->id }}">
                 <div class="block mb-1">
                     <label for="name" class="mb-1">Applicant</label>
-                    <span class="ms-2 error hidden" for="name">Applicant name is Required.</span>
+                    <span class="ms-2 error hidden" for="firstname">● First name is Required</span>
+                    <span class="ms-2 error hidden" for="middlename">● Middle name is Required</span>
+                    <span class="ms-2 error hidden" for="lastname">● Last name is Required</span>
                     @error('firstname')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -68,11 +70,42 @@
                     <input type="text" autocomplete="off" name="firstname" placeholder="First Name" value="{{ old('firstname') }}" class="w-1/3">
                     <input type="text" autocomplete="off" name="middlename" placeholder="Middle Name" value="{{ old('middlename') }}" class="w-1/3">
                     <input type="text" autocomplete="off" name="lastname" placeholder="Last Name" value="{{ old('lastname') }}" class="w-1/3">
+                    <select name="name_extension" class="w-32"> 
+                        <option value="">None</option>
+                        @foreach ($nameExtensions as $suffix)
+                        <option value="{{ $suffix }}" {{ old('name_extension') === $suffix ? 'selected' : '' }}>{{ $suffix }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="block mb-1">
+                    <label for="birthdate" class="mb-1">Birthdate</label>
+                    <span class="ms-2 error hidden" for="birthdate">● Birthdate is Required</span>
+                    <span class="ms-2 error hidden" for="gender">● Gender is Required</span>
+                    @error('birthdate')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                    @error('gender')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                </div>
+                <div class="flex justify-stretch gap-x-3 w-1/2">
+                    <input type="date" name="birthdate" value="{{ old('birthdate') }}" class="w-3/5">
+                    <select name="gender" class="w-2/5"> 
+                        <option value="">Select Gender</option>.
+                        <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                </div>
+
+
+                <div class="block mb-1">
                     <label for="address" class="mb-1">Address</label>
-                    <span class="ms-2 error hidden" for="address">Address is Required.</span>
+                    <span class="ms-2 error hidden" for="address">● Address is Required</span>
                     @error('address')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -82,8 +115,8 @@
                 <input type="text" autocomplete="off" name="address" placeholder="Input full address" value="{{ old('address') }}" class="w-3/4">
 
                 <div class="block mb-1">
-                    <label for="contact" class="mb-1">Contact No.</label>
-                    <span class="ms-2 error hidden" for="contact">Contact Info is Required.</span>  
+                    <label for="contact" class="mb-1">Contact No</label>
+                    <span class="ms-2 error hidden" for="contact">● Contact Info is Required</span>  
                     @error('contact')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -94,6 +127,7 @@
 
                 <div class="block mb-1">
                     <label for="email" class="mb-1">Email</label>
+                    <span class="ms-2 error hidden" for="email">● Email Required</span>  
                     @error('email')
                         <span class="ms-2 text-xs text-red-600 font-medium">
                             {{ $message }}
@@ -102,14 +136,29 @@
                 </div>
                 <input type="email" name="email" placeholder="Email address" value="{{ old('email') }}" class="w-1/2">
 
+                @if ($service->name === "Burial Assistance")
+                    <hr class="border-t my-3" />
+                    <div class="block mb-1">
+                        <label for="deceased_person" class="mb-1">Deceased Person</label>
+                        <span class="ms-2 error hidden" for="deceased_person">● Deceased Person Full Name is Required</span>  
+                        @error('deceased_person')
+                            <span class="ms-2 text-xs text-red-600 font-medium">
+                                {{ $message }}
+                            </span>
+                        @enderror
+                    </div>
+                    <input type="text" name="deceased_person" placeholder="Full name" value="{{ old('deceased_person') }}" class="w-1/2">
+                @endif
                 <div class="block mb-1">
+                    @if ($service->requirements->count())
                     <h1 class="mb-2">Attachments</h1>
+                    @endif
 
                     @foreach (old('attachments', $service->requirements) as $index => $requirement)
                             <div class="requirement-upload flex flex-col mb-2 w-[40%] bg-slate-400/50 p-1">
                                 <label for="attachments[{{ $index }}][file_path]" class="file-label">
                                     {{ old("attachments.{$index}.name") ? old("attachments.{$index}.name") : $requirement->name }}
-                                    <span class="ms-2 error hidden">Attachment Required.</span>
+                                    <span class="ms-2 error hidden">● Attachment Required</span>
                                 </label>
                                 <input type="file" name="attachments[{{ $index }}][file_path]" class="text-sm file-input">
                                 <input type="hidden" name="attachments[{{ $index }}][requirement_id]" value="{{ old("attachments.{$index}.requirement_id") ? old("attachments.{$index}.requirement_id") : $requirement->id }}">
@@ -130,74 +179,78 @@
 </x-layout>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('application-form');
     const fileInputs = document.querySelectorAll('.file-input');
 
-    // Grab the other form fields for validation
-    const nameInput = form.querySelector('input[name="name"]');
-    const nameError = form.querySelector('span.error[for="name"]');
+    // Grab the form fields for validation
+    const firstnameInput = form.querySelector('input[name="firstname"]');
+    const middlenameInput = form.querySelector('input[name="middlename"]');
+    const lastnameInput = form.querySelector('input[name="lastname"]');
     const addressInput = form.querySelector('input[name="address"]');
-    const addressError = form.querySelector('span.error[for="address"]');
     const contactInput = form.querySelector('input[name="contact"]');
-    const contactError = form.querySelector('span.error[for="contact"]');
+    const emailInput = form.querySelector('input[name="email"]');
+    const birthdateInput = form.querySelector('input[name="birthdate"]');
+    const genderSelect = form.querySelector('select[name="gender"]');
+    const deceasedPersonInput = form.querySelector('input[name="deceased_person"]');
 
-    form.addEventListener('submit', function (event) {
-        let isValid = true;
+    // Error spans
+    const errors = {
+        firstname: form.querySelector('span.error[for="firstname"]'),
+        middlename: form.querySelector('span.error[for="middlename"]'),
+        lastname: form.querySelector('span.error[for="lastname"]'),
+        address: form.querySelector('span.error[for="address"]'),
+        contact: form.querySelector('span.error[for="contact"]'),
+        email: form.querySelector('span.error[for="email"]'),
+        birthdate: form.querySelector('span.error[for="birthdate"]'),
+        gender: form.querySelector('span.error[for="gender"]'),
+        deceasedPerson: form.querySelector('span.error[for="deceased_person"]')
+    };
 
-       // Validate Name
-       if (!nameInput.value.trim()) {
-            nameError.classList.remove('hidden');
-            nameError.style.display = 'inline';
-            isValid = false;
-        } else {
-            nameError.classList.add('hidden');
-            nameError.style.display = 'none';
-        }
+    // Max date for birthdate input
+    birthdateInput.max = new Date().toISOString().split("T")[0];
 
-        // Validate Address
-        if (!addressInput.value.trim()) {
-            addressError.classList.remove('hidden');
-            addressError.style.display = 'inline';
-            isValid = false;
-        } else {
-            addressError.classList.add('hidden');
-            addressError.style.display = 'none';
-        }
+    // Add real-time validation
+    const inputs = [
+        { input: firstnameInput, error: errors.firstname },
+        { input: middlenameInput, error: errors.middlename },
+        { input: lastnameInput, error: errors.lastname },
+        { input: addressInput, error: errors.address },
+        { input: contactInput, error: errors.contact },
+        { input: emailInput, error: errors.email },
+        { input: birthdateInput, error: errors.birthdate },
+        { input: genderSelect, error: errors.gender },
+        { input: deceasedPersonInput, error: errors.deceasedPerson }
+    ];
 
-        // Validate Contact
-        if (!contactInput.value.trim()) {
-            contactError.classList.remove('hidden');
-            contactError.style.display = 'inline';
-            isValid = false;
-        } else {
-            contactError.classList.add('hidden');
-            contactError.style.display = 'none';
-        }
+    inputs.forEach(({ input, error }) => {
+        if (input) {
+            input.addEventListener('input', function () {
+                if (this.type === 'date') {
+                    // Special validation for birthdate
+                    const birthdateValue = new Date(this.value);
+                    const minAgeDate = new Date();
+                    minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
 
-        // Validate File Inputs
-        fileInputs.forEach(fileInput => {
-            const container = fileInput.closest('.requirement-upload');
-            const error = container.querySelector('.error');
-
-            if (!fileInput.files || fileInput.files.length === 0) {
-                error.classList.remove('hidden');
-                error.style.display = 'inline';
-                isValid = false;
-            } else {
-                error.classList.add('hidden');
-                error.style.display = 'none';
-            }
-        });
-
-        // Prevent form submission if any validation fails
-        if (!isValid) {
-            event.preventDefault();
+                    if (this.value && birthdateValue <= minAgeDate) {
+                        error.classList.add('hidden');
+                        error.style.display = 'none';
+                    }
+                } else if (this.type === 'select-one') {
+                    if (this.value) {
+                        error.classList.add('hidden');
+                        error.style.display = 'none';
+                    }
+                } else {
+                    if (this.value.trim()) {
+                        error.classList.add('hidden');
+                        error.style.display = 'none';
+                    }
+                }
+            });
         }
     });
 
-    // Update file input change handler to manage visual styles
     fileInputs.forEach(fileInput => {
         fileInput.addEventListener('change', function () {
             const container = this.closest('.requirement-upload');
@@ -222,6 +275,55 @@
                 }
             }
         });
+    });
+
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+        event.preventDefault();
+
+        inputs.forEach(({ input, error }) => {
+            if (input && !input.value.trim()) {
+                error.classList.remove('hidden');
+                error.style.display = 'inline';
+                isValid = false;
+            }
+        });
+
+        // Special validation for birthdate
+        const birthdateValue = new Date(birthdateInput.value);
+        const minAgeDate = new Date();
+        minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
+
+        if (!birthdateInput.value.trim()) {
+            errors.birthdate.classList.remove('hidden');
+            errors.birthdate.style.display = 'inline';
+            isValid = false;
+        } else if (birthdateValue > minAgeDate) {
+            errors.birthdate.textContent = '● Applicant must be at least 18 years old';
+            errors.birthdate.classList.remove('hidden');
+            errors.birthdate.style.display = 'inline';
+            isValid = false;
+        } else {
+            errors.birthdate.classList.add('hidden');
+            errors.birthdate.style.display = 'none';
+        }
+
+        // File inputs validation
+        fileInputs.forEach(fileInput => {
+            const container = fileInput.closest('.requirement-upload');
+            const error = container.querySelector('.error');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                error.classList.remove('hidden');
+                error.style.display = 'inline';
+                isValid = false;
+            } else {
+                error.classList.add('hidden');
+                error.style.display = 'none';
+            }
+        });
+
+        if (isValid) form.submit();
     });
 });
 
