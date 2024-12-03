@@ -53,6 +53,10 @@
                         Services
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.services*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                     </a>
+                    <a href="{{ route('archive') }}" class="relative group">
+                        Archive
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('archive')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
                     <a href="{{ route('users.index') }}" class="relative group">
                         Users
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('users.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>

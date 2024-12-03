@@ -6,9 +6,9 @@ label {
     @apply text-slate-700;
 }
 
-input:not(.search):not([type="file"]),
+input:not(.search):not([type="file"]):not(.no-style),
 textarea,
-select {
+select:not(.no-style) {
     @apply shadow-inner ps-2 py-2 rounded-md block mb-3 border border-sky-600 focus:outline-none focus:border-sky-400 focus:outline-sky-400 focus:outline-1 duration-300 text-sky-800;
 }
 
@@ -16,7 +16,7 @@ button {
     @apply shadow-sm hover:shadow-md hover:scale-105 active:scale-95 duration-300;
 }
 
-select {
+select:not(.no-style) {
     @apply py-2 px-3 rounded-md;
 }
 
@@ -26,6 +26,10 @@ select {
 
 .btn-secondary {
     @apply bg-slate-100 py-2 px-5 rounded-md text-xs text-center text-slate-700 font-medium hover:bg-slate-100/50;
+}
+
+.btn-archive {
+    @apply shadow-sm hover:shadow-md hover:scale-105 active:scale-95 duration-300 bg-emerald-100 py-2 px-5 rounded-md text-xs text-center text-emerald-700 font-medium hover:bg-emerald-100/50;
 }
 
 .btn-reject {

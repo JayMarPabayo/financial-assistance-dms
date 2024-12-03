@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\ScheduleExport;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ScheduleController;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Request as AuthRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 
 Route::get('/home', function () {
@@ -352,6 +355,33 @@ Route::middleware('auth')->group(function () {
         Route::resource('schedules', ScheduleController::class);
         Route::resource('users', UserController::class);
         Route::resource('services', ServiceController::class)->only(['store', 'update', 'destroy']);
+
+        Route::get('archive', function (Request $request) {
+            $searchKey = $request->input('search');
+            $municipality = $request->input('municipality');
+            $week = $request->input('week');
+            $month = $request->input('month');
+            $year = $request->input('year');
+
+            $schedules = Schedule::when($searchKey, fn($query) => $query->search($searchKey))
+                ->when($municipality, fn($query) => $query->whereHas('request', fn($q) => $q->where('municipality', $municipality)))
+                ->when($week, function ($query) use ($week) {
+                    $startOfWeek = Carbon::parse($week)->startOfWeek();
+                    $endOfWeek = Carbon::parse($week)->endOfWeek();
+
+                    $query->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
+                })
+                ->when($month, fn($query) => $query->whereMonth('created_at', Carbon::parse($month)->month))
+                ->when($year, fn($query) => $query->whereYear('created_at', $year))
+                ->paginate(15);
+
+            return view('admin.archive', ['schedules' => $schedules, 'services' => Service::all(), 'municipalities' => RequestModel::$municipalities]);
+        })->name('archive');
+
+        Route::get('archive/export', function (Request $request) {
+            /** @disregard [OPTIONAL_CODE] [OPTION_DESCRIPTION] */
+            return Excel::download(new ScheduleExport($request->input('search')), 'schedules.xlsx');
+        })->name('admin.archive.export');
     });
 
     Route::get('profile', function () {

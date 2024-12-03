@@ -22,6 +22,11 @@ class Schedule extends Model
     {
         return $this->belongsTo(Request::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function scopeSearch(Builder $query, string $keyword): Builder
     {
         return $query->whereHas('request', function ($query) use ($keyword) {
