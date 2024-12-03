@@ -29,6 +29,7 @@ class RequestFactory extends Factory
             'deceased_person' => '',
             'birthdate' => fake()->date('Y-m-d', '-18 years'),
             'gender' => fake()->randomElement(['Male', 'Female', 'Other']),
+            'municipality' => fake()->randomElement(Request::$municipalities),
             'address' => fake()->address(),
             'contact' => fake()->phoneNumber(),
             'email' => fake()->safeEmail(),

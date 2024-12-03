@@ -46,6 +46,7 @@ class Request extends Model
         'deceased_person',
         'gender',
         'birthdate',
+        'municipality',
         'address',
         'contact',
         'email',
@@ -68,6 +69,34 @@ class Request extends Model
         'IV',
         'V',
         'VI',
+    ];
+
+    public static $municipalities = [
+        'Alubijid',
+        'Balingasag',
+        'Balingoan',
+        'Binuangan',
+        'Claveria',
+        'El Salvador',
+        'Gingoog',
+        'Gitagum',
+        'Initao',
+        'Jasaan',
+        'Kinoguitan',
+        'Lagonglong',
+        'Laguindingan',
+        'Libertad',
+        'Lugait',
+        'Magsaysay',
+        'Manticao',
+        'Medina',
+        'Naawan',
+        'Opol',
+        'Salay',
+        'Sugbongcogon',
+        'Tagoloan',
+        'Talisayan',
+        'Villanueva',
     ];
 
     protected static function boot()

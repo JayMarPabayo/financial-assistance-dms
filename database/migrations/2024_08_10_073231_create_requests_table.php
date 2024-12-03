@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('deceased_person')->nullable();
             $table->string('gender');
             $table->date('birthdate');
+            $table->string('municipality');
             $table->string('address');
             $table->string('contact');
             $table->string('email')->nullable();

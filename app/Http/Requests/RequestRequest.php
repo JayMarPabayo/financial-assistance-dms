@@ -32,12 +32,13 @@ class RequestRequest extends FormRequest
             'deceased_person' => 'nullable|string',
             'gender' => 'required|string',
             'birthdate' => 'required|date|before:-18 years',
+            'municipality' => 'required|string',
             'address' => 'required|string',
             'contact' => 'required|string|max:15',
             'email' => 'nullable|email|max:255',
             'status' => 'nullable|string|max:50',
             'attachments' => 'sometimes|array',
-            'attachments.*.file_path' => 'required|file|mimes:pdf,jpeg,png,jpg,gif,doc,docx|max:2048',
+            'attachments.*.file_path' => 'required|file|mimes:pdf,jpeg,png,jpg,gif|max:2048',
         ];
     }
 
@@ -53,6 +54,7 @@ class RequestRequest extends FormRequest
             'lastname.required' => 'The last name is required.',
             'lastname.string' => 'The last name must be a valid string.',
             'lastname.max' => 'The last name must not exceed 255 characters.',
+            'municipality.required' => 'The municipality is required.',
             'address.required' => 'The address is required.',
             'address.string' => 'The address must be a valid string.',
             'contact.required' => 'The contact number is required.',
@@ -71,7 +73,7 @@ class RequestRequest extends FormRequest
             'attachments.array' => 'The attachments must be an array.',
             'attachments.*.file_path.required' => 'Each attachment must have a file.',
             'attachments.*.file_path.file' => 'Each attachment must be a valid file.',
-            'attachments.*.file_path.mimes' => 'Each attachment must be of type: pdf, jpeg, png, jpg, gif, doc, docx.',
+            'attachments.*.file_path.mimes' => 'Each attachment must be of type: pdf, jpeg, png, jpg, gif',
             'attachments.*.file_path.max' => 'Each attachment must not exceed 2MB in size.',
         ];
     }

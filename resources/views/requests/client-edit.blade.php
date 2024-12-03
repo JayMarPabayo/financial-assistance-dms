@@ -79,14 +79,14 @@
                 <div class="flex justify-stretch gap-x-3 w-1/2">
                     <input type="date" name="birthdate" value="{{ old('birthdate', $request->birthdate) }}" class="w-3/5">
                     <select name="gender" class="w-2/5"> 
-                        <option value="">Select Gender</option>
+                        <option value="" hidden>Select Gender</option>
                         <option value="Male" {{ old('gender', $request->gender) === 'Male' ? 'selected' : '' }}>Male</option>
                         <option value="Female" {{ old('gender', $request->gender) === 'Female' ? 'selected' : '' }}>Female</option>
                     </select>
                 </div>
 
                 <div class="block">
-                    <label for="address" class="mb-1">Address</label>
+                    <label for="address" class="mb-1">Full Address</label>
                     <span class="ms-2 error hidden" for="address">Address is Required.</span>
                     @error('address')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -94,7 +94,25 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" autocomplete="off" name="address" placeholder="Input full address" value="{{ old('address', $request->address) }}" class="w-3/4">
+                <input type="text" autocomplete="off" name="address" placeholder="Block / Street / Barangay / Municipality / Province"" value="{{ old('address', $request->address) }}" class="w-3/4">
+
+                <div class="block mb-1">
+                    <label for="municipality" class="mb-1">Municipality</label>
+                    <span class="ms-2 error hidden" for="municipality">● Municipality is Required</span>
+                    @error('municipality')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                </div>
+                <div class="flex justify-stretch gap-x-3 w-1/2">
+                    <select name="municipality" class="w-3/5">
+                        <option value="" hidden>Select Municipality</option>.
+                        @foreach ($municipalities as $municipality)
+                        <option value="{{ $municipality }}" {{ old('municipality', $request->municipality) === $municipality ? 'selected' : '' }}>{{ $municipality }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <div class="block">
                     <label for="contact" class="mb-1">Contact No.</label>
@@ -133,7 +151,7 @@
                 @endif
 
                 <div class="block mb-1">
-                    <h1 class="mb-2">Attachments</h1>
+                    <h1 class="mb-2">Attachments <span class="text-sm text-slate-500 ms-2">(pdf, jpeg, jpg, png & gif)</span></h1>
 
                     @php
                         $requirementFiles = [];
@@ -151,7 +169,6 @@
 
                     @foreach (old('attachments', $request->service->requirements) as $index => $requirement)
                         @php
-                            // Check if $requirement is an array or an object
                             $requirementId = is_array($requirement) ? $requirement['requirement_id'] : $requirement->id;
                             $requirementName = is_array($requirement) ? $requirement['name'] : $requirement->name;
                         @endphp
@@ -171,7 +188,12 @@
                                 </div>
                             @endif
 
-                            <input type="file" name="attachments[{{ $index }}][file_path]" class="text-sm file-input" id="file-input-{{ $requirementId }}">
+                            <input
+                            type="file"
+                            name="attachments[{{ $index }}][file_path]"
+                            class="text-sm file-input"
+                            id="file-input-{{ $requirementId }}"
+                            accept="image/png, image/jpeg, image/jpg, image/gif, application/pdf" />
                             <input type="hidden" name="attachments[{{ $index }}][requirement_id]" value="{{ $requirementId }}">
                             <input type="hidden" name="attachments[{{ $index }}][name]" value="{{ $requirementName }}">
                         </div>
@@ -203,8 +225,9 @@
         const birthdateError = form.querySelector('span.error[for="birthdate"]');
         const genderSelect = form.querySelector('select[name="gender"]');
         const genderError = form.querySelector('span.error[for="gender"]');
+        const municipalitySelect = form.querySelector('select[name="municipality"]');
+        const municipalityError = form.querySelector('span.error[for="municipality"]');
 
-        // Deceased Person
         const deceasedPersonInput = form.querySelector('input[name="deceased_person"]');
         const deceasedPersonError = form.querySelector('span.error[for="deceased_person"]');
 
@@ -232,6 +255,17 @@
                 nameError.classList.add('hidden');
                 nameError.style.display = 'none';
             }
+
+            if (!municipalitySelect.value || municipalitySelect.value === "") {
+                municipalityError.textContent = 'Municipality is Required';
+                municipalityError.classList.remove('hidden');
+                municipalityError.style.display = 'inline';
+                isValid = false;
+            } else {
+                municipalityError.classList.add('hidden');
+                municipalityError.style.display = 'none';
+            }
+
 
             if (!addressInput.value.trim()) {
                 addressError.classList.remove('hidden');
@@ -312,32 +346,31 @@
             if(isValid) form.submit();
         });
 
-    fileInputs.forEach(fileInput => {
-        fileInput.addEventListener('change', function () {
-            const container = this.closest('.requirement-upload');
-            const label = container.querySelector('.file-label');
-            const error = container.querySelector('.error');
+        fileInputs.forEach(fileInput => {
+            fileInput.addEventListener('change', function () {
+                const container = this.closest('.requirement-upload');
+                const label = container.querySelector('.file-label');
+                const error = container.querySelector('.error');
 
-            if (this.files && this.files.length > 0) {
-                container.style.backgroundColor = '#10B981';
-                container.style.color = '#ffffff';
-                if (label) {
-                    label.style.color = '#ffffff';
+                if (this.files && this.files.length > 0) {
+                    container.style.backgroundColor = '#10B981';
+                    container.style.color = '#ffffff';
+                    if (label) {
+                        label.style.color = '#ffffff';
+                    }
+                    if (error) {
+                        error.classList.add('hidden');
+                        error.style.display = 'none';
+                    }
+                } else {
+                    container.style.backgroundColor = 'rgba(156, 163, 175, 0.5)';
+                    container.style.color = '';
+                    if (label) {
+                        label.style.color = '';
+                    }
                 }
-                if (error) {
-                    error.classList.add('hidden');
-                    error.style.display = 'none';
-                }
-            } else {
-                container.style.backgroundColor = 'rgba(156, 163, 175, 0.5)';
-                container.style.color = '';
-                if (label) {
-                    label.style.color = '';
-                }
-            }
+            });
         });
-    });
-
     });
 
 </script>

@@ -66,7 +66,8 @@ class ServiceController extends Controller
             'service' => $service,
             'previousService' => $previousService,
             'nextService' => $nextService,
-            'nameExtensions' => ModelsRequest::$nameExtensions
+            'nameExtensions' => ModelsRequest::$nameExtensions,
+            'municipalities' => ModelsRequest::$municipalities
         ]);
     }
 

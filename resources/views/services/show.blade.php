@@ -93,18 +93,18 @@
                         </span>
                     @enderror
                 </div>
+                
                 <div class="flex justify-stretch gap-x-3 w-1/2">
                     <input type="date" name="birthdate" value="{{ old('birthdate') }}" class="w-3/5">
                     <select name="gender" class="w-2/5"> 
-                        <option value="">Select Gender</option>.
+                        <option value="" hidden>Select Gender</option>.
                         <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
                         <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
                     </select>
                 </div>
 
-
                 <div class="block mb-1">
-                    <label for="address" class="mb-1">Address</label>
+                    <label for="address" class="mb-1">Full Address</label>
                     <span class="ms-2 error hidden" for="address">● Address is Required</span>
                     @error('address')
                         <span class="ms-2 text-xs text-red-600 font-medium">
@@ -112,7 +112,25 @@
                         </span>
                     @enderror
                 </div>
-                <input type="text" autocomplete="off" name="address" placeholder="Input full address" value="{{ old('address') }}" class="w-3/4">
+                <input type="text" autocomplete="off" name="address" placeholder="Block / Street / Barangay / Municipality / Province" value="{{ old('address') }}" class="w-3/4">
+
+                <div class="block mb-1">
+                    <label for="municipality" class="mb-1">Municipality</label>
+                    <span class="ms-2 error hidden" for="municipality">● Municipality is Required</span>
+                    @error('municipality')
+                        <span class="ms-2 text-xs text-red-600 font-medium">
+                            {{ $message }}
+                        </span>
+                    @enderror
+                </div>
+                <div class="flex justify-stretch gap-x-3 w-1/2">
+                    <select name="municipality" class="w-3/5">
+                        <option value="" hidden>Select Municipality</option>.
+                        @foreach ($municipalities as $municipality)
+                        <option value="{{ $municipality }}" {{ old('municipality') === $municipality ? 'selected' : '' }}>{{ $municipality }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <div class="block mb-1">
                     <label for="contact" class="mb-1">Contact No</label>
@@ -151,19 +169,23 @@
                 @endif
                 <div class="block mb-1">
                     @if ($service->requirements->count())
-                    <h1 class="mb-2">Attachments</h1>
+                    <h1 class="mb-2">Attachments <span class="text-sm text-slate-500 ms-2">(pdf, jpeg, jpg, png & gif)</span></h1>
                     @endif
 
                     @foreach (old('attachments', $service->requirements) as $index => $requirement)
-                            <div class="requirement-upload flex flex-col mb-2 w-[40%] bg-slate-400/50 p-1">
-                                <label for="attachments[{{ $index }}][file_path]" class="file-label">
-                                    {{ old("attachments.{$index}.name") ? old("attachments.{$index}.name") : $requirement->name }}
-                                    <span class="ms-2 error hidden">● Attachment Required</span>
-                                </label>
-                                <input type="file" name="attachments[{{ $index }}][file_path]" class="text-sm file-input">
-                                <input type="hidden" name="attachments[{{ $index }}][requirement_id]" value="{{ old("attachments.{$index}.requirement_id") ? old("attachments.{$index}.requirement_id") : $requirement->id }}">
-                                <input type="hidden" name="attachments[{{ $index }}][name]" value="{{ old("attachments.{$index}.name") ? old("attachments.{$index}.name") : $requirement->name }}">
-                            </div>
+                        <div class="requirement-upload flex flex-col mb-2 w-[40%] bg-slate-400/50 p-1">
+                            <label for="attachments[{{ $index }}][file_path]" class="file-label">
+                                {{ old("attachments.{$index}.name") ? old("attachments.{$index}.name") : $requirement->name }}
+                                <span class="ms-2 error hidden">● Attachment Required</span>
+                            </label>
+                            <input
+                            type="file"
+                            name="attachments[{{ $index }}][file_path]"
+                            class="text-sm file-input"
+                            accept="image/png, image/jpeg, image/jpg, image/gif, application/pdf" />
+                            <input type="hidden" name="attachments[{{ $index }}][requirement_id]" value="{{ old("attachments.{$index}.requirement_id") ? old("attachments.{$index}.requirement_id") : $requirement->id }}">
+                            <input type="hidden" name="attachments[{{ $index }}][name]" value="{{ old("attachments.{$index}.name") ? old("attachments.{$index}.name") : $requirement->name }}">
+                        </div>
                     @endforeach
                 </div>
               
@@ -183,7 +205,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('application-form');
     const fileInputs = document.querySelectorAll('.file-input');
 
-    // Grab the form fields for validation
     const firstnameInput = form.querySelector('input[name="firstname"]');
     const middlenameInput = form.querySelector('input[name="middlename"]');
     const lastnameInput = form.querySelector('input[name="lastname"]');
@@ -192,9 +213,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailInput = form.querySelector('input[name="email"]');
     const birthdateInput = form.querySelector('input[name="birthdate"]');
     const genderSelect = form.querySelector('select[name="gender"]');
+    const municipalitySelect = form.querySelector('select[name="municipality"]');
     const deceasedPersonInput = form.querySelector('input[name="deceased_person"]');
 
-    // Error spans
     const errors = {
         firstname: form.querySelector('span.error[for="firstname"]'),
         middlename: form.querySelector('span.error[for="middlename"]'),
@@ -204,13 +225,12 @@ document.addEventListener('DOMContentLoaded', function () {
         email: form.querySelector('span.error[for="email"]'),
         birthdate: form.querySelector('span.error[for="birthdate"]'),
         gender: form.querySelector('span.error[for="gender"]'),
+        municipality: form.querySelector('span.error[for="municipality"]'),
         deceasedPerson: form.querySelector('span.error[for="deceased_person"]')
     };
 
-    // Max date for birthdate input
     birthdateInput.max = new Date().toISOString().split("T")[0];
 
-    // Add real-time validation
     const inputs = [
         { input: firstnameInput, error: errors.firstname },
         { input: middlenameInput, error: errors.middlename },
@@ -220,6 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { input: emailInput, error: errors.email },
         { input: birthdateInput, error: errors.birthdate },
         { input: genderSelect, error: errors.gender },
+        { input: municipalitySelect, error: errors.municipality },
         { input: deceasedPersonInput, error: errors.deceasedPerson }
     ];
 
@@ -227,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (input) {
             input.addEventListener('input', function () {
                 if (this.type === 'date') {
-                    // Special validation for birthdate
                     const birthdateValue = new Date(this.value);
                     const minAgeDate = new Date();
                     minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
@@ -289,7 +309,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Special validation for birthdate
         const birthdateValue = new Date(birthdateInput.value);
         const minAgeDate = new Date();
         minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
@@ -308,7 +327,6 @@ document.addEventListener('DOMContentLoaded', function () {
             errors.birthdate.style.display = 'none';
         }
 
-        // File inputs validation
         fileInputs.forEach(fileInput => {
             const container = fileInput.closest('.requirement-upload');
             const error = container.querySelector('.error');

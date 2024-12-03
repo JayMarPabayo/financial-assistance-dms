@@ -84,7 +84,13 @@ class RequestController extends Controller
                 ]);
 
             default:
-                return view('requests.show');
+                return view('requests.show', [
+                    'request' => [],
+                    'search' => '',
+                    'firstname' => '',
+                    'lastname' => '',
+                    'middleinitial' => ''
+                ]);
         }
     }
 

@@ -126,7 +126,7 @@
                     <form method="POST" id="reject-form" action="{{ route('applications.reject') }}" class="w-full flex flex-col">
                         @csrf
                         @method('PUT')
-                        <textarea name="message" class="p-2 w-full"></textarea>
+                        <textarea name="message" class="p-2 w-full" placeholder="Reason for Rejection"></textarea>
                         @error('message')
                             <p class="error">{{ $message }}</p>
                         @enderror

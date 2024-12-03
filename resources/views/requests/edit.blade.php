@@ -130,7 +130,7 @@
                     action="{{ route('applications.reject') }}" class="flex flex-col w-full">
                         @csrf
                         @method('PUT')
-                        <textarea name="message" class="p-2 w-full"></textarea>
+                        <textarea name="message" class="p-2 w-full" placeholder="Reason for Rejection"></textarea>
                         @error('message')
                             <p class="error">{{ $message }}</p>
                         @enderror

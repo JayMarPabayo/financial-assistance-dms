@@ -197,7 +197,7 @@ Route::middleware('guest')->group(function () {
     Route::get('applications/{tracking}', function (string $tracking) {
         $request = RequestModel::where('tracking_no', $tracking)->firstOrFail();
         $nameExtensions = RequestModel::$nameExtensions;
-        return view('requests.client-edit', ['request' => $request, 'nameExtensions' => $nameExtensions]);
+        return view('requests.client-edit', ['request' => $request, 'nameExtensions' => $nameExtensions, 'municipalities' => RequestModel::$municipalities]);
     })->name('applications.edit');
 
     // -- FORGOT PASSWORD -- 
