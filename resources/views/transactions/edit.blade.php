@@ -74,7 +74,8 @@
         @php
             $attachments = $request->attachments ?? [];
         @endphp
-        <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex items-center gap-x-3">
+
+        <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex flex-wrap items-center gap-3">
             @forelse ($attachments as $attachment)
                 @php
                     $filename = basename($attachment->file_path);
@@ -97,7 +98,7 @@
                         x-show="showMenu" 
                         x-cloak
                         @click.away="showMenu = false"
-                        class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left"
+                        class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left z-20"
                         style="display: none;"
                         x-transition>
                         <a href="{{ route('file.download', ['filename' => $filename]) }}" 
@@ -114,6 +115,7 @@
                 <span>No files attached</span>
             @endforelse
         </section>
+
 
         <hr class="mb-5 border-sky-800 border-t-2" />
         @if ($request->status !== "For schedule")

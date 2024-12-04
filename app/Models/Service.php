@@ -56,4 +56,14 @@ class Service extends Model
     {
         return 'slug';
     }
+
+    public function getForReviewAttribute()
+    {
+        return $this->requests()->where('status', 'For review')->count();
+    }
+
+    public function getForScheduleAttribute()
+    {
+        return $this->requests()->where('status', 'For schedule')->count();
+    }
 }

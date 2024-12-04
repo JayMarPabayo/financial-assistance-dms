@@ -23,7 +23,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-
+use Illuminate\Support\Carbon as SupportCarbon;
 
 Route::get('/home', function () {
     return view('index');
@@ -121,8 +121,21 @@ Route::middleware('guest')->group(function () {
 
         $service = Service::where('slug', $slug)->firstOrFail();
         $data = $request->validated();
-        $data['tracking_no'] = uniqid();
 
+        $alreadyRequested = RequestModel::where('firstname', $data['firstname'])
+            ->where('middlename', $data['middlename'])
+            ->where('lastname', $data['lastname'])
+            ->whereDate('birthdate', operator: $data['birthdate'])
+            ->whereDate('created_at', operator: SupportCarbon::today())
+            ->exists();
+
+        if ($alreadyRequested) {
+            return redirect()->back()->with('error', 'You have already submitted a request for today. Please try again tomorrow.')->withInput();
+        }
+
+
+
+        $data['tracking_no'] = uniqid();
         $data['status'] = 'For review';
 
         $savedRequest = $service->requests()->create($data);
@@ -190,7 +203,7 @@ Route::middleware('guest')->group(function () {
         }
 
 
-        $redirectUrl = route('applications.show') . '?search=' . $requestToUpdate->tracking_no;
+        $redirectUrl = route('applications.show') . '?mode=tracking&search=' . $requestToUpdate->tracking_no;
         return redirect($redirectUrl);
     })->name('applications.update');
 
@@ -254,9 +267,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', function () {
         if (Auth::user()->role === "Staff") {
-            return redirect()->route('requests.index');
+            return redirect()->route('dashboard.staff');
         } else if (Auth::user()->role === "Administrator") {
-            return redirect()->route('admin.index');
+            return redirect()->route('dashboard.admin');
         } else {
             return redirect()->route('home');
         }
@@ -266,6 +279,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Staff')->group(function () {
 
         Route::resource('requests', RequestController::class);
+
+        Route::get('staff/dashboard', function () {
+            $services = Service::all();
+            $forReviewsCount = RequestModel::where('status', 'For review')->count();
+            $forSchedulesCount = RequestModel::where('status', 'For schedule')->count();
+            $rejectedCount = RequestModel::where('status', 'Rejected')->count();
+            return view('profile.dashboard', ['services' => $services, 'forReviewsCount' => $forReviewsCount, 'forSchedulesCount' => $forSchedulesCount, 'rejectedCount' => $rejectedCount]);
+        })->name('dashboard.staff');
 
         Route::get('transactions', function (Request $request) {
             $searchKey = $request->input('search');
@@ -305,6 +326,13 @@ Route::middleware('auth')->group(function () {
 
     // For Admin
     Route::middleware('role:Administrator')->group(function () {
+
+        Route::get('admin/dashboard', function () {
+            $services = Service::all();
+            $approvedCount = RequestModel::where('status', 'Approved')->count();
+            $forSchedulesCount = RequestModel::where('status', 'For schedule')->count();
+            return view('admin.dashboard', ['services' => $services, 'approvedCount' => $approvedCount, 'forSchedulesCount' => $forSchedulesCount]);
+        })->name('dashboard.admin');
 
         Route::get('submissions', function (Request $request) {
             $searchKey = $request->input('search');

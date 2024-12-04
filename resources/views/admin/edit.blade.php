@@ -52,27 +52,37 @@
         @php
             $attachments = $request->attachments ?? [];
         @endphp
-        <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex items-center gap-x-3">
+        <section class="file-section rounded-md p-3 bg-white/50 text-sm mb-5 flex flex-wrap items-center gap-3">
             @forelse ($attachments as $attachment)
                 @php
                     $filename = basename($attachment->file_path);
                 @endphp
-                <div class="flex items-center gap-x-2 text-xs font-medium py-1 px-2 rounded-md bg-slate-400/50 relative"  x-data="{ showMenu: false }">
+                <div class="flex items-center gap-x-2 text-xs font-medium py-1 px-2 rounded-md relative"
+                    x-data="{ showMenu: false, isChecked: false }"
+                    data-status="{{ $request->status }}"
+                    :class="isChecked ? 'bg-green-400' : 'bg-slate-400/50'">
+                    <input 
+                        type="checkbox" 
+                        class="cursor-pointer attachment-checkbox"
+                        x-show="$el.closest('div').dataset.status === 'For review'"  
+                        style="margin-bottom: 0"
+                        @change="isChecked = $event.target.checked">
                     <p>{{ substr($filename, 14) }}</p>
-                    <button @click="showMenu = !showMenu" class="relative">
+                    <button @click="showMenu = !showMenu" class="z-0">
                         <x-carbon-overflow-menu-horizontal class="w-5"/>
                     </button>
-                    <div 
-                    x-show="showMenu" 
-                    @click.away="showMenu = false" 
-                    class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left"
-                    x-cloak
-                >
-                        <a @click.away="showMenu = false" href="{{ route('file.download', ['filename' => $filename]) }}" 
+                    <div
+                        x-show="showMenu" 
+                        x-cloak
+                        @click.away="showMenu = false"
+                        class="absolute top-full right-0 bg-white shadow-md border rounded-md mt-2 w-32 text-left z-20"
+                        style="display: none;"
+                        x-transition>
+                        <a href="{{ route('file.download', ['filename' => $filename]) }}" 
                         class="block px-4 py-2 hover:bg-slate-100">
                             Download
                         </a>
-                        <a @click.away="showMenu = false" target="_blank" href="{{ route('file.view', ['filename' => $filename]) }}" 
+                        <a target="_blank" href="{{ route('file.view', ['filename' => $filename]) }}" 
                         class="block px-4 py-2 hover:bg-slate-100">
                             View
                         </a>

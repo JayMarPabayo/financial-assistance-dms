@@ -32,6 +32,10 @@
             @auth
 
                 @if (Auth::check() && Auth::user()->role === 'Staff')
+                    <a href="{{ route('dashboard.staff') }}" class="relative group">
+                        Dashboard
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('dashboard.staff')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
                     <a href="{{ route('requests.index') }}" class="relative group">
                         Requests
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('requests.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
@@ -41,6 +45,10 @@
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('transactions.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
                     </a>
                 @else
+                    <a href="{{ route('dashboard.admin') }}" class="relative group">
+                        Dashboard
+                        <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('dashboard.admin')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
+                    </a>
                     <a href="{{ route('admin.index') }}" class="relative group">
                         Submissions
                         <span class="absolute bottom-0 left-0 h-[0.15rem] bg-white transition-all duration-300 {{ (request()->routeIs('admin.*')) ? 'w-full' : 'w-0 group-hover:w-full' }}"></span>
