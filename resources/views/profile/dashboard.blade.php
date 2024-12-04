@@ -31,7 +31,7 @@
         </div>
         <div class="grid grid-cols-5 gap-5">
             @foreach ($services as $service)
-                <div class="bg-white/80 rounded-md shadow-sm p-2 col-span-1">
+                <a href="{{ route('requests.index', [ 'filter' => strtolower($service->name) ]) }}" class="bg-white/70 hover:bg-white duration-300 rounded-md shadow-sm hover:shadow-lg p-2 col-span-1">
                     <h1 class="font-medium">
                         <div class="mb-2 text-slate-600 text-base"> {{ $service->name }}</div>
                         <div class="flex items-center gap-x-2 text-emerald-900 mb-1">
@@ -43,7 +43,7 @@
                             <p class="text-xs text-emerald-900/70">Pending Requests</p>
                         </div>
                     </h1>
-                </div>
+                </a>
             @endforeach
         </div>
     </main>
