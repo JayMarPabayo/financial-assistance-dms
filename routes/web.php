@@ -130,7 +130,7 @@ Route::middleware('guest')->group(function () {
             ->exists();
 
         if ($alreadyRequested) {
-            return redirect()->back()->with('error', 'You have already submitted a request for today. Please try again tomorrow.')->withInput();
+            return redirect()->back()->with('error', 'You have already submitted a request for today.')->withInput();
         }
 
 
