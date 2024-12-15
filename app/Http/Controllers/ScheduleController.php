@@ -19,7 +19,7 @@ class ScheduleController extends Controller
     {
         $searchKey = $request->input('search');
         $service = $request->input('filter');
-        $sort = $request->input('sort') ?? 'id';
+        $sort = $request->input('sort') ?? 'created_at';
 
         $serviceId = Service::where('name', $service)->first()?->id;
 
@@ -30,7 +30,7 @@ class ScheduleController extends Controller
                 fn($query) =>
                 $query->whereHas('request', fn($q) => $q->where('service_id', $serviceId))
             )
-            ->orderBy($sort, 'asc')
+            ->orderBy($sort, 'desc')
             ->paginate(15);
 
         return view('admin.schedules', ['schedules' => $schedules, 'services' => Service::all()]);
